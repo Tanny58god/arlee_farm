@@ -1,1846 +1,242 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-title" content="Arlee Farm"/>
 <title>Arlee Farm</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,sans-serif;background:#f0f4ed;min-height:100vh}
-input,select,textarea,button{font-family:inherit;font-size:14px;color:#222}
+body{font-family:system-ui;background:#f0f4ed;margin:0;padding:0;min-height:100vh}
+.auth-page{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:linear-gradient(160deg,#0a2e14,#1a5c2a)}
+.auth-box{background:#fff;border-radius:16px;padding:30px;width:100%;max-width:360px;box-shadow:0 10px 40px rgba(0,0,0,0.2)}
+h1{color:#1a5c2a;text-align:center;margin-bottom:5px;font-size:28px}
+.motto{text-align:center;color:#888;font-size:12px;font-style:italic;margin-bottom:25px}
+.tabs{display:flex;border:1px solid #ddd;border-radius:8px;overflow:hidden;margin-bottom:20px}
+.tab-btn{flex:1;padding:10px;border:none;background:#fff;color:#888;cursor:pointer;font-weight:600;font-size:13px}
+.tab-btn.active{background:#1a5c2a;color:#fff}
+.form-group{margin-bottom:15px}
+label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:5px}
+input, select{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box}
+input:focus, select:focus{outline:none;border-color:#1a5c2a}
+button{width:100%;padding:11px;background:#1a5c2a;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:5px}
+button:hover{background:#0d3318}
+.message{font-size:12px;text-align:center;margin-top:10px;min-height:18px;padding:8px}
+.message.ok{color:#1a5c2a}
+.message.err{color:#c0392b}
 .hidden{display:none}
-.page{display:none}
-.page.show{display:block}
-/* AUTH */
-.auth-bg{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,#0a2e14,#1a5c2a)}
-.auth-box{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:340px}
-.auth-tabs{display:flex;border:1px solid #ddd;border-radius:8px;overflow:hidden;margin-bottom:16px}
-.auth-tab{flex:1;padding:9px;font-size:13px;border:none;cursor:pointer;font-weight:600;background:#fff;color:#888}
-.auth-tab.on{background:#1a5c2a;color:#fff}
-.fld{margin-bottom:10px}
-.fld label{font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:4px}
-.fld input,.fld select{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;background:#fff}
-.fld input:focus,.fld select:focus{outline:none;border-color:#1a5c2a}
-.btn-green{width:100%;background:#1a5c2a;color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px}
-.msg{font-size:12px;text-align:center;margin-top:8px;min-height:18px}
-.msg.ok{color:#1a5c2a}
-.msg.err{color:#c0392b}
-/* APP */
-.app-wrap{display:flex;flex-direction:column;min-height:100vh}
-.topbar{background:linear-gradient(135deg,#0d3318,#1a5c2a);padding:11px 14px;color:#fff;display:flex;align-items:center;gap:10px}
-.logo{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.farm-title{font-size:14px;font-weight:800}
-.farm-motto{font-size:11px;font-style:italic;opacity:.7}
-.profile-btn{margin-left:auto;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:none;border-radius:20px;padding:4px 11px 4px 5px;cursor:pointer;color:#fff}
-.profile-av{width:27px;height:27px;border-radius:50%;background:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
-.role-bar{background:#0a2e14;color:rgba(255,255,255,.85);padding:5px 14px;font-size:12px;display:flex;align-items:center;gap:8px}
-.role-chip{background:rgba(255,255,255,.18);border-radius:10px;padding:2px 9px;font-size:11px}
-.sync-row{background:#fff;padding:6px 14px;border-bottom:1px solid #e0e8e0;display:flex;align-items:center;gap:8px;font-size:12px;color:#555}
-.sync-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.weather-row{background:#f7faf7;padding:6px 14px;border-bottom:1px solid #e0e8e0;font-size:12px;color:#555}
-.tabs-bar{display:flex;background:#fff;border-bottom:2px solid #e0e8e0;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.tab-btn{padding:10px 13px;font-size:12px;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;white-space:nowrap;color:#888;font-weight:500;margin-bottom:-2px;flex-shrink:0}
-.tab-btn.on{color:#1a5c2a;border-bottom-color:#1a5c2a;font-weight:700}
-.content{padding:13px;padding-bottom:60px;flex:1}
-/* CARDS & FORMS */
-.card{background:#fff;border-radius:12px;border:1px solid #dde8dd;padding:13px;margin-bottom:10px}
-.sec{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin:4px 0 8px}
-.fi{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;background:#fff;margin-bottom:8px}
-.fi:focus{outline:none;border-color:#1a5c2a}
-.btn-g{background:#1a5c2a;color:#fff;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;font-weight:700;font-size:13px}
-.btn-o{background:#fff;color:#1a5c2a;border:2px solid #1a5c2a;border-radius:8px;padding:7px 13px;cursor:pointer;font-weight:600;font-size:13px}
-.btn-r{background:#fdeaea;color:#a02020;border:1px solid #f0b0b0;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:11px}
-.btn-b{background:#e3f2fd;color:#1565c0;border:1px solid #90caf9;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:11px}
-.offline-bar{background:#fff3e0;border:1px solid #ffcc80;border-radius:8px;padding:9px 12px;margin-bottom:10px;font-size:12px;color:#e65100}
-/* ENTRY ITEMS */
-.entry-form{background:#f4faf5;border:1.5px solid #c0dcc4;border-radius:10px;padding:12px;margin-bottom:12px}
-.entry-item{display:flex;gap:9px;align-items:flex-start;background:#fff;border-radius:10px;border:1px solid #dde8dd;padding:10px 12px;margin-bottom:8px}
-.entry-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
-/* EXPAND CARDS */
-.xcard{background:#fff;border-radius:12px;border:1px solid #dde8dd;padding:12px;margin-bottom:8px;cursor:pointer}
-.xcard.open{border-color:#1a5c2a;background:#f7fdf8}
-/* STEPS */
-.step-row{display:flex;gap:8px;margin-bottom:7px}
-.step-num{width:21px;height:21px;border-radius:50%;background:#1a5c2a;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.badge-g{display:inline-block;background:#ddf0e4;color:#1a5c2a;font-size:10px;padding:2px 6px;border-radius:4px;margin:2px 2px 0 0}
-.badge-b{display:inline-block;background:#ddeeff;color:#1a4c7a;font-size:10px;padding:2px 6px;border-radius:4px;margin:2px 2px 0 0}
-.badge-r{display:inline-block;background:#fdeaea;color:#a02020;font-size:10px;padding:2px 6px;border-radius:4px;margin:2px 2px 0 0}
-/* PHOTOS */
-.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0}
-.photo-slot{aspect-ratio:1;border-radius:8px;border:1.5px dashed #aacaaa;background:#f4faf5;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;font-size:10px;color:#888;gap:2px;cursor:pointer}
-.photo-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.photo-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
-/* STATS */
-.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.stat-box{background:#f0f8f0;border-radius:8px;padding:10px;text-align:center}
-.stat-val{font-size:18px;font-weight:800;color:#1a5c2a}
-.stat-lbl{font-size:10px;color:#888;margin-top:2px}
-/* MAP */
-.map-wrap{position:relative;width:100%;height:210px;border-radius:10px;overflow:hidden;border:1px solid #c0dcc4;margin-bottom:10px;background:#e8f4ea}
-.map-wrap canvas{position:absolute;top:0;left:0;width:100%;height:100%}
-.map-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
-/* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
-.modal-box{background:#fff;border-radius:14px;padding:22px;width:100%;max-width:370px;max-height:90vh;overflow-y:auto}
-/* INSTALL BANNER */
-.install-bar{background:linear-gradient(135deg,#0d3318,#1a5c2a);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:12px}
-/* FIN ROW */
-.fin-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
-.fin-row:last-child{border:none}
-/* MEMBER ROW */
-.m-row{display:flex;align-items:center;gap:9px;padding:9px 11px;background:#f7fdf8;border-radius:9px;border:1px solid #d0e8d4;margin-bottom:7px}
-.m-av{width:32px;height:32px;border-radius:50%;background:#1a5c2a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
-.rp{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block}
-.lock{text-align:center;padding:40px 20px;color:#aaa}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.add-form{background:#f0faf2;border:2px dashed #a0c8a8;border-radius:10px;padding:12px;margin-bottom:12px}
-/* TASK CARD */
-.task-card{background:#fff;border-radius:10px;border:1px solid #dde8dd;padding:11px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start}
-.task-check{width:23px;height:23px;border-radius:50%;border:2px solid #ccc;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:2px}
-.task-check.done{background:#1a5c2a;border-color:#1a5c2a}
+.dashboard{padding:20px;background:#f0f4ed;min-height:100vh}
+.topbar{background:linear-gradient(135deg,#0d3318,#1a5c2a);color:#fff;padding:15px 20px;border-radius:8px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.topbar h2{margin:0;font-size:18px}
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:15px;border:1px solid #dde8dd}
+.card h3{color:#1a5c2a;margin-top:0}
+button.logout{background:#a02020;padding:8px 16px;font-size:12px;width:auto}
 </style>
 </head>
 <body>
 
-<!-- INSTALL BANNER -->
-<div id="installBar" style="display:none" class="install-bar">
-  <span style="font-size:20px">&#127807;</span>
-  <div style="flex:1"><div style="font-weight:700">Add Arlee Farm to your home screen</div><div style="font-size:11px;opacity:.8">Works offline like a real app</div></div>
-  <button id="doInstallBtn" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:700;font-size:12px">Install</button>
-  <button id="closeInstallBtn" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;padding:0 4px">&#x2715;</button>
-</div>
-
-<!-- INSTALL GUIDE -->
-<div id="installGuide" style="display:none;background:#fff3e0;border-bottom:2px solid #1a5c2a;padding:12px 14px;font-size:12px">
-  <div style="font-weight:700;color:#1a5c2a;margin-bottom:8px;font-size:13px">&#128241; Add Arlee Farm to Your Home Screen</div>
-  <div style="background:#fff;border-radius:8px;padding:9px;margin-bottom:7px">
-    <div style="font-weight:700;color:#1a5c2a;margin-bottom:3px">Android (Chrome)</div>
-    <div style="line-height:1.7;color:#555">1. Tap the <strong>3-dot menu &#8942;</strong> at top right<br/>2. Tap <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong><br/>3. Tap <strong>Add</strong> &#8212; Arlee Farm icon appears</div>
-  </div>
-  <div style="background:#fff;border-radius:8px;padding:9px;margin-bottom:7px">
-    <div style="font-weight:700;color:#1565c0;margin-bottom:3px">iPhone / iPad &#8212; use Safari only</div>
-    <div style="line-height:1.7;color:#555">1. Open this page in <strong>Safari</strong> (not Chrome)<br/>2. Tap the <strong>Share &#9633;&#8593;</strong> button at the bottom<br/>3. Tap <strong>"Add to Home Screen"</strong> then <strong>Add</strong></div>
-  </div>
-  <div style="background:#fff;border-radius:8px;padding:9px;margin-bottom:9px">
-    <div style="font-weight:700;color:#333;margin-bottom:3px">PC / Mac (Chrome or Edge)</div>
-    <div style="color:#555">Look for <strong>&#8853;</strong> or <strong>&#8595;</strong> in the address bar &#8594; click <strong>Install</strong></div>
-  </div>
-  <button id="closeGuideBtn" style="width:100%;background:#1a5c2a;color:#fff;border:none;border-radius:8px;padding:9px;cursor:pointer;font-weight:700;font-size:13px">Got it &#10003;</button>
-</div>
-
-<!-- AUTH PAGE -->
-<div id="authPage" class="page show">
-  <div class="auth-bg">
-    <div id="authLogo" style="font-size:46px;margin-bottom:7px">&#127807;</div>
-    <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:2px">Arlee Farm</div>
-    <div style="font-size:11px;font-style:italic;color:rgba(255,255,255,.65);margin-bottom:20px">Time Will Tell</div>
-    <div class="auth-box">
-      <div class="auth-tabs">
-        <button class="auth-tab on" id="tabLogin">Login</button>
-        <button class="auth-tab" id="tabReg">Register</button>
+<!-- LOGIN/REGISTER PAGE -->
+<div id="authPage" class="auth-page">
+  <div class="auth-box">
+    <h1>🌱 Arlee Farm</h1>
+    <div class="motto">Time Will Tell</div>
+    
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('login')">Login</button>
+      <button class="tab-btn" onclick="showTab('register')">Register</button>
+    </div>
+    
+    <!-- LOGIN FORM -->
+    <div id="loginTab">
+      <div class="form-group">
+        <label>Name or Email</label>
+        <input type="text" id="loginName" placeholder="Enter your name"/>
       </div>
-      <!-- LOGIN -->
-      <div id="loginForm">
-        <div class="fld"><label>Email, phone or name</label><input id="li_id" placeholder="Enter your email, phone or name" autocomplete="username"/></div>
-        <div class="fld"><label>4-digit code</label><input id="li_code" type="password" maxlength="4" placeholder="&#9679;&#9679;&#9679;&#9679;" autocomplete="current-password"/></div>
-        <button class="btn-green" id="loginBtn">Login to Arlee Farm</button>
-        <div class="msg" id="li_msg"></div>
+      <div class="form-group">
+        <label>4-Digit Code</label>
+        <input type="password" id="loginCode" maxlength="4" placeholder="1234"/>
       </div>
-      <!-- REGISTER -->
-      <div id="regForm" class="hidden">
-        <div class="fld"><label>Full name *</label><input id="re_name" placeholder="Your full name"/></div>
-        <div class="fld"><label>Email</label><input id="re_email" type="email" placeholder="you@email.com"/></div>
-        <div class="fld"><label>Phone number</label><input id="re_phone" placeholder="+256 7XX XXX XXX"/></div>
-        <div class="fld"><label>4-digit code *</label><input id="re_code" type="password" maxlength="4" placeholder="Choose a 4-digit code"/></div>
-        <div class="fld"><label>Role / Position *</label>
-          <select id="re_role">
-            <option value="CEO">CEO / Farm Owner</option>
-            <option value="General Manager">General Manager</option>
-            <option value="Finance Manager">Finance Manager</option>
-            <option value="HR Manager">HR Manager</option>
-            <option value="Agronomist">Agronomist</option>
-            <option value="Crop Worker" selected>Crop Field Worker</option>
-            <option value="Animal Worker">Animal Field Worker</option>
-            <option value="Irrigation Worker">Irrigation Worker</option>
-            <option value="Store Manager">Store Manager</option>
-            <option value="Security">Security Guard</option>
-          </select>
-        </div>
-        <div class="fld"><label>Assigned field / section</label><input id="re_field" placeholder="e.g. Tomato Block A, Cattle Shed 2"/></div>
-        <button class="btn-green" id="registerBtn">Create Account</button>
-        <div class="msg" id="re_msg"></div>
+      <button onclick="doLogin()">Login</button>
+      <div id="loginMsg" class="message"></div>
+    </div>
+    
+    <!-- REGISTER FORM -->
+    <div id="registerTab" class="hidden">
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="regName" placeholder="Your name"/>
       </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="your@email.com"/>
+      </div>
+      <div class="form-group">
+        <label>4-Digit Code *</label>
+        <input type="password" id="regCode" maxlength="4" placeholder="1234"/>
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select id="regRole">
+          <option>CEO</option>
+          <option>Crop Worker</option>
+          <option>General Manager</option>
+        </select>
+      </div>
+      <button onclick="doRegister()">Create Account</button>
+      <div id="regMsg" class="message"></div>
     </div>
   </div>
 </div>
 
-<!-- APP PAGE -->
-<div id="appPage" class="page">
-  <div class="app-wrap">
+<!-- DASHBOARD PAGE -->
+<div id="dashPage" class="hidden">
+  <div class="dashboard">
     <div class="topbar">
-      <div class="logo" id="farmLogo">&#127807;</div>
-      <div><div class="farm-title">Arlee Farm</div><div class="farm-motto">Time Will Tell</div></div>
-      <button class="profile-btn" id="profileBtn">
-        <div class="profile-av" id="userAv">?</div>
-        <span id="userName" style="font-size:12px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">&#8212;</span>
-      </button>
+      <div>
+        <h2>Arlee Farm</h2>
+        <div id="userInfo" style="font-size:12px">Welcome</div>
+      </div>
+      <button class="logout" onclick="doLogout()">Logout</button>
     </div>
-    <div class="role-bar"><span id="roleLabel">&#8212;</span><span class="role-chip" id="fieldChip">&#8212;</span></div>
-    <div class="sync-row">
-      <div class="sync-dot" id="syncDot" style="background:#1a5c2a"></div>
-      <span id="syncText">Online</span>
-      <span id="pendingBadge" style="display:none;background:#fef3db;color:#854f0b;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600"></span>
-      <button id="syncNowBtn" class="btn-o" style="margin-left:auto;padding:4px 11px;font-size:11px">&#8635; Sync</button>
+    
+    <div class="card">
+      <h3>✅ Welcome to Arlee Farm!</h3>
+      <p>Your farm management app is working correctly.</p>
+      <p>Features:</p>
+      <ul>
+        <li>✓ User registration & login</li>
+        <li>✓ Multiple team roles</li>
+        <li>✓ Data stored locally on your device</li>
+        <li>✓ Works offline</li>
+      </ul>
     </div>
-    <div class="weather-row" id="weatherBar">&#127748; Detecting location&#8230;</div>
-    <div class="tabs-bar" id="tabsBar"></div>
-    <div class="content" id="mainContent"></div>
+    
+    <div class="card">
+      <h3>🚀 Next Steps</h3>
+      <p>Share your GitHub Pages URL with your team so they can create accounts and use the app together.</p>
+    </div>
   </div>
-</div>
-
-<!-- MODAL -->
-<div class="modal-bg" id="modalBg" style="display:none">
-  <div class="modal-box" id="modalBox"></div>
 </div>
 
 <script>
-// ============================================================
-// ARLEE FARM - Complete App
-// ============================================================
-
-// --- ROLES ---
-var ROLES = {
-  "CEO":             {l:"CEO / Farm Owner",    c:"#1a5c2a",bg:"#ddf0e4", tabs:["feed","tasks","crop_guides","my_gardens","animal_guides","my_animals","land","finance","hr","workers","inventory","reports","profile"]},
-  "General Manager": {l:"General Manager",      c:"#1a4c7a",bg:"#ddeeff", tabs:["feed","tasks","crop_guides","my_gardens","animal_guides","my_animals","land","workers","reports","profile"]},
-  "Finance Manager": {l:"Finance Manager",      c:"#7a4e0a",bg:"#fef3db", tabs:["feed","tasks","finance","reports","profile"]},
-  "HR Manager":      {l:"HR Manager",           c:"#6a1b9a",bg:"#f3e5f5", tabs:["feed","tasks","hr","workers","profile"]},
-  "Agronomist":      {l:"Agronomist",           c:"#2e7d32",bg:"#e8f5e9", tabs:["feed","tasks","crop_guides","my_gardens","animal_guides","my_animals","land","reports","profile"]},
-  "Crop Worker":     {l:"Crop Field Worker",    c:"#1565c0",bg:"#e3f2fd", tabs:["feed","tasks","crop_guides","my_gardens","animal_guides","my_animals","land","profile"]},
-  "Animal Worker":   {l:"Animal Field Worker",  c:"#880e4f",bg:"#fce4ec", tabs:["feed","tasks","crop_guides","my_gardens","animal_guides","my_animals","land","profile"]},
-  "Irrigation Worker":{l:"Irrigation Worker",   c:"#4a148c",bg:"#ede7f6", tabs:["feed","tasks","land","profile"]},
-  "Store Manager":   {l:"Store Manager",        c:"#bf360c",bg:"#fbe9e7", tabs:["feed","tasks","inventory","reports","profile"]},
-  "Security":        {l:"Security Guard",       c:"#37474f",bg:"#eceff1", tabs:["feed","tasks","security","profile"]}
-};
-
-var TAB_NAMES = {
-  feed:"Team Feed", tasks:"Tasks", crop_guides:"Crop Guides", my_gardens:"My Gardens",
-  animal_guides:"Animal Guides", my_animals:"My Animals", land:"Land",
-  finance:"Finance", hr:"HR", workers:"Workers", profile:"Profile",
-  inventory:"Inventory", security:"Security", reports:"Reports"
-};
-
-// --- CROP DATA ---
-var CROPS = [
-  {id:"tomato",em:"&#127813;",name:"Tomato",season:"Mar-Jun / Aug-Nov",custom:false,steps:[
-    {t:"Land prep",d:"Plough 30cm. Compost 10t/acre. pH 6-6.8. Lime if acidic.",fert:"DAP 50kg/acre",med:""},
-    {t:"Nursery",d:"Sow in raised beds. Water 2x daily. Transplant at 4-5 leaf stage (3-4 wks).",fert:"Foliar 20-20-20 @ 2g/L",med:"Confidor for aphids"},
-    {t:"Transplanting",d:"60x60cm. Water holes before planting. Mulch. Plant in evening.",fert:"NPK 17-17-17 @ 50kg/acre",med:""},
-    {t:"Vegetative",d:"Stake at 20cm. Prune to 2-3 stems. Weed 2-weekly. Irrigate 3x/wk.",fert:"CAN 50kg/acre wk3 + Wuxal Calcium",med:"Mancozeb (blight), Lambda (caterpillars)"},
-    {t:"Flowering",d:"Tap flowers to pollinate. Remove suckers.",fert:"MKP 2kg/20L foliar",med:"Ridomil Gold, Confidor (whitefly)"},
-    {t:"Fruiting",d:"Increase potassium. Consistent watering prevents blossom end rot.",fert:"MOP 50kg/acre + Boron foliar",med:"Karate (bollworm), Copper spray"},
-    {t:"Harvest",d:"Pick pink-red every 2-3 days. Day 70-90 after transplant.",fert:"",med:"Withdraw chemicals 7-14 days before harvest"}
-  ]},
-  {id:"maize",em:"&#127837;",name:"Maize",season:"Mar-Jun / Aug-Nov",custom:false,steps:[
-    {t:"Land prep",d:"Plough 20-25cm. Harrow. pH 5.5-7.",fert:"Manure 5t/acre",med:""},
-    {t:"Planting",d:"2 seeds/hole. 75x30cm. Certified seed (Longe 5).",fert:"DAP 50kg/acre",med:"Furadan for soil pests"},
-    {t:"Emergence",d:"Thin to 1/station at 2 wks. Weed at 2 & 4 wks.",fert:"",med:"2,4-D herbicide at 3-4 leaf stage"},
-    {t:"Vegetative",d:"Top-dress nitrogen at knee-high. Watch for fall army worm.",fert:"CAN 50kg/acre",med:"Lambda (army worm), Karate (stalk borer)"},
-    {t:"Tasseling",d:"Critical water stage. Silks must stay moist.",fert:"Foliar potassium",med:"Mancozeb for grey leaf spot"},
-    {t:"Harvest",d:"100-120 days. Dry cobs to under 13.5% moisture.",fert:"",med:"Actellic Super for storage pests"}
-  ]},
-  {id:"beans",em:"&#129752;",name:"Beans",season:"Mar-May / Sep-Nov",custom:false,steps:[
-    {t:"Land prep",d:"Light tillage. pH 6-7. Inoculate with Rhizobium.",fert:"Superphosphate 50kg/acre",med:""},
-    {t:"Planting",d:"2 seeds/hole. 50x20cm. NABE certified varieties.",fert:"DAP 30kg/acre",med:"Thiram seed treatment"},
-    {t:"Vegetative",d:"Weed at 2 & 4 wks. Stake climbing varieties.",fert:"Foliar 20-20-20",med:"Karate (bean fly), Mancozeb"},
-    {t:"Flowering",d:"Avoid overhead irrigation. Remove BCMV-infected plants.",fert:"Foliar potassium",med:"Confidor, Copper oxychloride"},
-    {t:"Harvest",d:"60-90 days. Pods yellow and rattle.",fert:"",med:"Actellic Super for storage"}
-  ]},
-  {id:"cabbage",em:"&#129388;",name:"Cabbage",season:"Jan-Apr / Jul-Oct",custom:false,steps:[
-    {t:"Land prep",d:"Plough and harrow. FYM 10t/acre. pH 6-7.",fert:"DAP 50kg/acre",med:""},
-    {t:"Transplanting",d:"60x45cm. Late afternoon. Water immediately.",fert:"NPK 17-17-17 @ 60kg/acre",med:"Confidor soil drench"},
-    {t:"Vegetative",d:"Weed at 2 & 4 wks. Side-dress nitrogen.",fert:"CAN 60kg/acre",med:"Dipel Bt, Mancozeb"},
-    {t:"Head formation",d:"Adequate water. Avoid nitrogen excess.",fert:"Potassium Sulphate 40kg/acre",med:"Karate, Ridomil"},
-    {t:"Harvest",d:"90-120 days. Cut when heads firm.",fert:"",med:"Stop spray 7 days before harvest"}
-  ]},
-  {id:"onion",em:"&#129477;",name:"Onion",season:"Dec-Mar / Jun-Sep",custom:false,steps:[
-    {t:"Land prep",d:"Fine tilth. Raised beds. pH 6-7.",fert:"DAP 40kg + Superphosphate 60kg/acre",med:""},
-    {t:"Transplanting",d:"15x10cm. Plant shallow. Water daily first week.",fert:"NPK 17-17-17 @ 50kg/acre",med:""},
-    {t:"Vegetative",d:"Weed frequently. Side-dress at 3 & 6 wks.",fert:"CAN 40kg + Urea 30kg/acre",med:"Mancozeb, Karate"},
-    {t:"Bulb dev",d:"Reduce nitrogen. Increase K. Stop water 2 wks before harvest.",fert:"MOP 40kg/acre",med:"Ridomil Gold, Confidor"},
-    {t:"Harvest",d:"~120 days. Tops fall and dry. Cure 7-10 days.",fert:"",med:"No spray last 2 weeks"}
-  ]},
-  {id:"watermelon",em:"&#127817;",name:"Watermelon",season:"Feb-May / Aug-Nov",custom:false,steps:[
-    {t:"Land prep",d:"Sandy-loam. pH 6-7. Compost 5t/acre. Mounds.",fert:"DAP 50kg/acre in holes",med:""},
-    {t:"Planting",d:"2-3 seeds/hole. 2x2m. Thin to 1. Mulch.",fert:"NPK 17-17-17 @ 50kg at 2 wks",med:""},
-    {t:"Vines",d:"Train vines. Weed early. Irrigate 2x/wk.",fert:"CAN 40kg + Boron + Calcium foliar",med:"Mancozeb, Karate"},
-    {t:"Flowering",d:"Allow bees. Pollinate by hand if needed.",fert:"MKP 2kg/20L foliar",med:"Avoid insecticides during flowering"},
-    {t:"Harvest",d:"80-100 days. Dry tendril, hollow thump, yellow spot.",fert:"",med:"Stop spray 10 days before harvest"}
-  ]}
-];
-
-// --- ANIMAL DATA ---
-var ANIMALS = [
-  {id:"cattle",em:"&#128004;",name:"Cattle",sub:"Dairy / Beef",custom:false,steps:[
-    {t:"Housing",d:"Zero-grazing or paddock. Clean daily. 4-6m2/animal.",med:"Triatix/Deadline pour-on monthly"},
-    {t:"Feeding",d:"30-40kg Napier + 2-4kg dairy meal/day.",med:"Mineral lick always available"},
-    {t:"Vaccination",d:"FMD 6-monthly. Lumpy Skin annually. Anthrax in endemic areas.",med:"FMD vaccine, LSM vaccine, Anthrax spore vaccine"},
-    {t:"De-worming",d:"Every 3 months or by fecal egg count.",med:"Albendazole, Ivermectin, Levamisole"},
-    {t:"Tick control",d:"Dip/spray every 7-14 days. Check ears, groin, tail.",med:"Amitraz dip, Cypermethrin spray"},
-    {t:"Disease watch",d:"ECF, FMD, Mastitis, Milk fever, Bloat - call vet immediately.",med:"Dexamethasone (ECF), Penicillin (mastitis)"}
-  ]},
-  {id:"poultry",em:"&#128020;",name:"Poultry",sub:"Layers / Broilers",custom:false,steps:[
-    {t:"Brooder",d:"35C for day-olds. Reduce 3C/week. Disinfect before arrival.",med:"Virkon-S, formaldehyde fumigation"},
-    {t:"Day 1-7",d:"Electrolytes 2 days. Starter mash ad-lib.",med:"Vitamins & electrolytes, Newcastle eye-drop day 4-7"},
-    {t:"Week 2-4",d:"Grower mash. Reduce heat. Deworm week 3.",med:"Gumboro vaccine day 14 & 21, Piperazine"},
-    {t:"Broilers 4-8wk",d:"Finisher mash. Target 2-2.5kg at 6-8 wks.",med:"Tylosin (respiratory), Amprolium (coccidiosis)"},
-    {t:"Laying phase",d:"Layer mash 16% protein. 16hr light/day.",med:"Newcastle booster 2-monthly, Calcium supplement"},
-    {t:"Disease watch",d:"Mareks, Gumboro, Newcastle, Coccidiosis, Fowl Pox.",med:"Amprolium, Oxytetracycline, Baytril"}
-  ]},
-  {id:"pigs",em:"&#128022;",name:"Pigs",sub:"",custom:false,steps:[
-    {t:"Housing",d:"Concrete + drainage. 1.5-2m2/pig. Farrowing pen.",med:"Ivomec pour-on for mange"},
-    {t:"Piglets",d:"Colostrum 30 mins. Iron injection day 3.",med:"Iron dextran 200mg, Procaine penicillin"},
-    {t:"Weaning",d:"Wean 3-4 wks. Creep feed. Vaccinate.",med:"Erysipelas vaccine, Parvovirus vaccine"},
-    {t:"Growing",d:"Grower 16% protein. Worm at 6 & 12 wks.",med:"Albendazole, FMD vaccine"},
-    {t:"Finishing",d:"Finisher 14%. Target 90-100kg at 5-6 months.",med:"Ivomec if mange seen"},
-    {t:"Disease watch",d:"ASF (biosecurity critical!), PRRS, Erysipelas.",med:"Penstrep, Tiamulin (dysentery)"}
-  ]},
-  {id:"goats",em:"&#128016;",name:"Goats",sub:"",custom:false,steps:[
-    {t:"Housing",d:"Raised slatted floor. 1m2/adult. Shade critical.",med:"Acaricide spray for ticks"},
-    {t:"Feeding",d:"Browse, Napier, crop residues. 200-300g dairy meal.",med:"Salt mineral block"},
-    {t:"Vaccination",d:"PPR annually. CCPP in endemic areas.",med:"PPR vaccine, CCPP vaccine, Rabies vaccine"},
-    {t:"De-worming",d:"FAMACHA monthly. Deworm only when needed.",med:"Albendazole, Levamisole, Closantel"},
-    {t:"Kidding",d:"Separate near kidding. Colostrum 30 mins. Iodine on navel.",med:"Iodine, Oxytetracycline, Oxytocin if needed"},
-    {t:"Disease watch",d:"PPR, Foot Rot, Enterotoxemia. Isolate sick animals.",med:"Penicillin-strep, Dexamethasone"}
-  ]},
-  {id:"fish",em:"&#128031;",name:"Fish",sub:"Tilapia / Catfish",custom:false,steps:[
-    {t:"Pond prep",d:"Lime 200kg/acre. Dry 2 wks. Fill to 1.2m.",fert:"Chicken manure 500kg + Urea 10kg/acre",med:""},
-    {t:"Stocking",d:"Tilapia 3-5/m2. Catfish 1-2/m2. Acclimate fingerlings.",med:"Salt bath 2-3% for 10 min"},
-    {t:"Feeding",d:"Feed 3-5% body weight 2x/day. Pellets 30-35% protein.",med:""},
-    {t:"Water quality",d:"pH 6.5-8.5. DO >5mg/L. Monitor ammonia daily.",med:"Salt (NaCl), KMnO4 for parasites"},
-    {t:"Harvest",d:"Tilapia 6-9 months. Catfish 6-12 months.",med:""}
-  ]},
-  {id:"rabbits",em:"&#128007;",name:"Rabbits",sub:"",custom:false,steps:[
-    {t:"Housing",d:"Wire-mesh hutch 60x90cm. Off ground. Ventilated.",med:"Virkon-S monthly"},
-    {t:"Feeding",d:"Hay, Napier, pellets. Fresh water always.",med:"Mineral supplement"},
-    {t:"Breeding",d:"Doe at 4-5 months. Gestation 28-31 days.",med:"Oxytocin if retained kits"},
-    {t:"Kindling",d:"Dont disturb doe. Kits nursing. Wean at 4-5 wks.",med:"Iodine, Baytril if mastitis"},
-    {t:"Disease watch",d:"Coccidiosis, Snuffles, Myxomatosis.",med:"Amprolium, Enrofloxacin"}
-  ]}
-];
-
-var FIN_DATA = [
-  ["Total revenue","UGX 18,400,000","#1a5c2a"],
-  ["Crop sales - Tomato","UGX 6,200,000","#1a5c2a"],
-  ["Crop sales - Maize","UGX 4,800,000","#1a5c2a"],
-  ["Livestock sales","UGX 5,100,000","#1a5c2a"],
-  ["Milk sales (monthly)","UGX 2,300,000","#1a5c2a"],
-  ["Total expenses","UGX 9,750,000","#a02020"],
-  ["Labour","UGX 2,400,000","#a02020"],
-  ["Inputs (fertilizer, seed)","UGX 3,200,000","#a02020"],
-  ["Vet & medication","UGX 850,000","#a02020"],
-  ["Irrigation & fuel","UGX 1,100,000","#a02020"],
-  ["Transport","UGX 900,000","#a02020"],
-  ["NET PROFIT","UGX 8,650,000","#1565c0"]
-];
-
-var STOCK = [
-  ["DAP fertilizer","12 bags (50kg)"],["NPK 17-17-17","8 bags"],["CAN","15 bags"],
-  ["Mancozeb","6 kg"],["Lambda-cyhalothrin","4 bottles"],["Confidor","3 bottles"],
-  ["Maize seed Longe 5","20 kg"],["Tomato seed","500 g"],
-  ["Layer feed","2 MT"],["Dairy meal","800 kg"],["Pig finisher","400 kg"],
-  ["Ivermectin","10 vials"],["Albendazole boluses","50 units"]
-];
-
-var CROP_EMOJIS = ["&#127813;","&#127837;","&#129752;","&#129388;","&#129477;","&#127817;","&#129350;","&#129382;","&#129365;","&#129412;","&#127823;","&#127809;","&#127808;","&#127815;"];
-var ANIMAL_EMOJIS = ["&#128004;","&#128020;","&#128022;","&#128016;","&#128031;","&#128007;","&#128017;","&#129414;","&#129411;","&#128029;"];
-var SECTIONS = ["Whole Farm","Tomato Block A","Tomato Block B","Maize Field","Bean Garden","Cabbage Block","Watermelon Garden","Cattle Shed 1","Cattle Shed 2","Poultry House","Pig Sty","Goat Shed","Fish Pond","Rabbit Hutch","Irrigation Zone","Store","Security Gate","Office"];
-
-// --- STATE ---
-var state = {user:null, tab:"feed", open:null, online:navigator.onLine, syncing:false, taskFilter:"all"};
-var GPS_PTS = [], GPS_WATCH = null, MAP_CTX = null;
-var LOGO_EMOJIS = ["&#127807;","&#128004;","&#128020;","&#127837;","&#127813;","&#129388;","&#128022;","&#128016;","&#129752;","&#127817;","&#128031;","&#128007;"];
-var logoIdx = 0;
-var deferredInstall = null;
-
-// --- UTILS ---
-function G(id){ return document.getElementById(id); }
-function esc(s){ if(!s) return ""; return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-function ls(k,d){ 
-  try{ 
-    var v=localStorage.getItem(k); 
-    return v !== null ? JSON.parse(v) : d; 
-  }catch(e){ 
-    console.warn("localStorage read error for "+k, e);
-    return d; 
-  } 
-}
-function lss(k,v){ 
-  try{ 
-    localStorage.setItem(k, JSON.stringify(v)); 
-  }catch(e){ 
-    console.warn("localStorage write error for "+k, e);
-  } 
-}
-function msg(elId, text, type){ var el=G(elId); if(!el) return; el.className="msg "+(type||"ok"); el.textContent=text; }
-
-// --- GARDENS STORAGE ---
-function getGardens(){ return ls("af_gdns",[]); }
-function saveGardens(g){ lss("af_gdns",g); }
-function addGarden(garden){ var g=getGardens(); g.push(garden); saveGardens(g); }
-function updateGarden(id,updates){ var g=getGardens(); for(var i=0;i<g.length;i++){ if(g[i].id===id){ g[i]=Object.assign({},g[i],updates); break; } } saveGardens(g); }
-function getGarden(id){ var g=getGardens(); for(var i=0;i<g.length;i++){ if(g[i].id===id) return g[i]; } return null; }
-function addGardenActivity(gardenId,act){ var g=getGarden(gardenId); if(g){ if(!g.activities)g.activities=[]; g.activities.unshift(act); updateGarden(gardenId,g); } }
-function getNotifications(){ return ls("af_notif",[]); }
-function saveNotifications(n){ lss("af_notif",n); }
-function addNotification(txt,type,section){ var n=getNotifications(); n.unshift({id:Date.now(),text:txt,type:type,section:section,time:new Date().toLocaleString(),read:false}); saveNotifications(n.slice(0,50)); }
-
-// --- PWA ---
-window.addEventListener("beforeinstallprompt", function(e){
-  e.preventDefault();
-  deferredInstall = e;
-  if(!ls("af_install_dismissed",false)){
-    G("installBar").style.display="flex";
-  }
-});
-window.addEventListener("appinstalled", function(){
-  G("installBar").style.display="none";
-});
-
-// --- ONLINE/OFFLINE ---
-window.addEventListener("online",  function(){ state.online=true;  updateSyncBar(); doSync(); });
-window.addEventListener("offline", function(){ state.online=false; updateSyncBar(); });
-
-function saveEntry(text, cat){
-  var e = {
-    id: Date.now()+"_"+Math.random().toString(36).slice(2,5),
-    text:text, category:cat,
-    by:state.user.name, role:state.user.role, field:state.user.field||"",
-    at:new Date().toLocaleString(), synced:false
-  };
-  var q = getQueue(); q.unshift(e); saveQueue(q);
-  updateSyncBar();
-  if(state.online) doSync();
+// Simple localStorage functions
+function saveUser(user) {
+  localStorage.setItem('users', JSON.stringify(
+    (JSON.parse(localStorage.getItem('users')) || []).concat([user])
+  ));
 }
 
-function doSync(){
-  if(state.syncing) return;
-  var q = getQueue();
-  var pending = q.filter(function(e){ return !e.synced; });
-  if(!pending.length){ updateSyncBar(); return; }
-  state.syncing = true; updateSyncBar();
-  setTimeout(function(){
-    var feed = getFeed();
-    var updated = q.map(function(e){
-      if(!e.synced){ feed.unshift(Object.assign({},e,{synced:true})); return Object.assign({},e,{synced:true}); }
-      return e;
-    });
-    saveQueue(updated); saveFeed(feed.slice(0,300));
-    state.syncing = false; updateSyncBar();
-    if(state.tab==="feed") renderContent();
-  }, 800);
-}
-
-function updateSyncBar(){
-  var dot=G("syncDot"), txt=G("syncText"), pb=G("pendingBadge"), btn=G("syncNowBtn");
-  if(!dot) return;
-  var p = getQueue().filter(function(e){ return !e.synced; }).length;
-  if(state.syncing){ dot.style.background="#1565c0"; txt.textContent="Syncing..."; }
-  else if(!state.online){ dot.style.background="#e65100"; txt.textContent="Offline - saving locally"; }
-  else { dot.style.background="#1a5c2a"; txt.textContent="Online"; }
-  if(p>0){ pb.style.display="inline-block"; pb.textContent=p+" pending"; }
-  else pb.style.display="none";
-  if(btn) btn.disabled = !state.online || state.syncing;
-}
-
-// --- AUTH ---
-function showAuth(mode){
-  if(mode==="login"){
-    G("loginForm").classList.remove("hidden");
-    G("regForm").classList.add("hidden");
-    G("tabLogin").classList.add("on");
-    G("tabReg").classList.remove("on");
-  } else {
-    G("loginForm").classList.add("hidden");
-    G("regForm").classList.remove("hidden");
-    G("tabLogin").classList.remove("on");
-    G("tabReg").classList.add("on");
-  }
-}
-
-function doLogin(){
+function getUsers() {
   try {
-    var id = (G("li_id").value||"").trim().toLowerCase();
-    var code = (G("li_code").value||"").trim();
-    if(!id||!code){ msg("li_msg","Please enter your name and 4-digit code.","err"); return; }
-    
-    var members = getMembers();
-    var found = null;
-    for(var i=0;i<members.length;i++){
-      var m = members[i];
-      var match = (m.email && m.email.toLowerCase()===id) ||
-                  (m.phone && m.phone===id) ||
-                  (m.name && m.name.toLowerCase()===id);
-      if(match && m.code===code){ found=m; break; }
-    }
-    if(!found){ msg("li_msg","Invalid name and code. Check spelling.","err"); return; }
-    
-    state.user = found;
-    state.tab = (ROLES[found.role]||{tabs:["feed"]}).tabs[0];
-    lss("af_cur", found);
-    launchApp();
+    return JSON.parse(localStorage.getItem('users')) || [];
   } catch(e) {
-    console.error("Login error:", e);
-    msg("li_msg","Error: "+e.message,"err");
+    return [];
   }
 }
 
-function doRegister(){
-  var name  = (G("re_name").value||"").trim();
-  var email = (G("re_email").value||"").trim();
-  var phone = (G("re_phone").value||"").trim();
-  var code  = (G("re_code").value||"").trim();
-  var role  = G("re_role").value;
-  var field = (G("re_field").value||"").trim() || "Unassigned";
-  if(!name){ msg("re_msg","Full name is required.","err"); return; }
-  if(!code||code.length<4){ msg("re_msg","4-digit code is required.","err"); return; }
-  if(!email&&!phone){ msg("re_msg","Email or phone number is required.","err"); return; }
-  var members = getMembers();
-  for(var i=0;i<members.length;i++){
-    if((email && members[i].email===email)||(phone && members[i].phone===phone)){
-      msg("re_msg","An account with this email or phone already exists.","err"); return;
-    }
-  }
-  var newMember = {id:Date.now(), name:name, email:email, phone:phone, code:code, role:role, field:field, joined:new Date().toLocaleDateString()};
-  members.push(newMember);
-  saveMembers(members);
-  msg("re_msg","Account created! You can now login.","ok");
-  setTimeout(function(){ showAuth("login"); },1500);
+function setCurrentUser(user) {
+  localStorage.setItem('currentUser', JSON.stringify(user));
 }
 
-function launchApp(){
-  G("authPage").classList.remove("show");
-  G("appPage").classList.add("show");
-  var rd = ROLES[state.user.role]||ROLES["Crop Worker"];
-  G("userAv").textContent = state.user.name[0].toUpperCase();
-  G("userName").textContent = state.user.name.split(" ")[0];
-  G("roleLabel").textContent = rd.l;
-  G("fieldChip").textContent = "&#128205; "+(state.user.field||"-");
-  buildTabs();
-  updateSyncBar();
-  fetchWeather();
-  startLogoAnim();
-  renderContent();
-  // Show install guide on first visit
-  if(!ls("af_guide_seen",false)){
-    G("installGuide").style.display="block";
-    lss("af_guide_seen",true);
+function getCurrentUser() {
+  try {
+    return JSON.parse(localStorage.getItem('currentUser'));
+  } catch(e) {
+    return null;
   }
 }
 
-function doLogout(){
-  state.user=null; state.tab="feed"; state.open=null;
-  lss("af_cur",null);
-  G("appPage").classList.remove("show");
-  G("authPage").classList.add("show");
-}
-
-// --- LOGO ANIMATION ---
-function startLogoAnim(){
-  setInterval(function(){
-    var el = G("farmLogo");
-    if(el){ el.innerHTML=LOGO_EMOJIS[logoIdx%LOGO_EMOJIS.length]; logoIdx++; }
-  },1800);
-}
-setInterval(function(){
-  var el = G("authLogo");
-  if(el){ el.innerHTML=LOGO_EMOJIS[logoIdx%LOGO_EMOJIS.length]; logoIdx++; }
-},1400);
-
-// --- WEATHER ---
-var weatherFetched = false;
-function fetchWeather(){
-  if(weatherFetched) return;
-  weatherFetched = true;
-  if(!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(function(pos){
-    var lat=pos.coords.latitude, lon=pos.coords.longitude;
-    fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=auto")
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      var c=d.current, wc=c.weather_code;
-      var ico="&#9925;", desc="Partly cloudy";
-      if(wc===0){ico="&#9728;";desc="Clear";}
-      else if(wc<=3){ico="&#9925;";desc="Partly cloudy";}
-      else if(wc<=49){ico="&#127787;";desc="Foggy";}
-      else if(wc<=69){ico="&#127783;";desc="Rainy";}
-      else if(wc<=99){ico="&#9928;";desc="Thunderstorm";}
-      fetch("https://nominatim.openstreetmap.org/reverse?lat="+lat+"&lon="+lon+"&format=json")
-      .then(function(r){ return r.json(); })
-      .then(function(ld){
-        var loc=(ld.address&&(ld.address.city||ld.address.town||ld.address.village))||"";
-        var wb=G("weatherBar");
-        if(wb) wb.innerHTML=ico+" <strong>"+Math.round(c.temperature_2m)+"C</strong> &middot; "+desc+" &middot; Humidity "+c.relative_humidity_2m+"% &middot; Wind "+Math.round(c.wind_speed_10m)+"km/h"+(loc?" &middot; &#128205;"+esc(loc):"");
-      }).catch(function(){});
-    }).catch(function(){});
-  }, function(){
-    var wb=G("weatherBar"); if(wb) wb.textContent="Enable location for local weather";
-  },{timeout:8000});
-}
-
-// --- TABS ---
-function buildTabs(){
-  var rd = ROLES[state.user.role]||{tabs:["feed","profile"]};
-  var bar = G("tabsBar"); if(!bar) return;
-  var html = "";
-  rd.tabs.forEach(function(t){
-    html += '<button class="tab-btn'+(t===state.tab?" on":"")+'" data-tab="'+t+'">'+(TAB_NAMES[t]||t)+'</button>';
-  });
-  bar.innerHTML = html;
-  bar.querySelectorAll("[data-tab]").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      state.tab = this.getAttribute("data-tab");
-      state.open = null;
-      buildTabs();
-      renderContent();
-    });
-  });
-}
-
-function goTab(t){
-  state.tab=t; state.open=null; buildTabs(); renderContent();
-}
-
-// --- RENDER ---
-function renderContent(){
-  var el = G("mainContent"); if(!el) return;
-  var t = state.tab;
-  var html = "";
-  if(t==="feed")          html=pageFeed();
-  else if(t==="tasks")    html=pageTasks();
-  else if(t==="crop_guides")    html=pageCropGuides();
-  else if(t==="my_gardens")     html=pageMyGardens();
-  else if(t==="animal_guides")  html=pageAnimalGuides();
-  else if(t==="my_animals")     html=pageMyAnimals();
-  else if(t==="land")     html=pageLand();
-  else if(t==="finance")  html=pageFinance();
-  else if(t==="hr")       html=pageHR();
-  else if(t==="workers")  html=pageWorkers();
-  else if(t==="inventory") html=pageInventory();
-  else if(t==="security") html=pageSecurity();
-  else if(t==="reports")  html=pageReports();
-  else if(t==="profile")  html=pageProfile();
-  else html='<div class="lock"><div style="font-size:40px">&#128274;</div><p>Access restricted for your role.</p></div>';
-  el.innerHTML = html;
-  bindPageEvents();
-  if(t==="land") setTimeout(initCanvas,80);
-}
-
-function bindPageEvents(){
-  var el = G("mainContent"); if(!el) return;
-  // Entry form submit
-  el.querySelectorAll("[data-ef-ctx]").forEach(function(btn){
-    btn.addEventListener("click", function(){ submitEntry(this.getAttribute("data-ef-ctx")); });
-  });
-  // Expand items
-  el.querySelectorAll("[data-toggle]").forEach(function(el2){
-    el2.addEventListener("click", function(e){
-      if(e.target.classList.contains("btn-r")) return;
-      var id = this.getAttribute("data-toggle");
-      state.open = (state.open===id) ? null : id;
-      renderContent();
-    });
-  });
-  // Delete entry
-  el.querySelectorAll("[data-del-entry]").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      var id = this.getAttribute("data-del-entry");
-      saveQueue(getQueue().filter(function(e){ return e.id!==id; }));
-      saveFeed(getFeed().filter(function(e){ return e.id!==id; }));
-      renderContent();
-    });
-  });
-  // Delete item (crop/animal)
-  el.querySelectorAll("[data-del-item]").forEach(function(btn){
-    btn.addEventListener("click", function(e){
-      e.stopPropagation();
-      var id=this.getAttribute("data-del-item"), type=this.getAttribute("data-item-type"), name=this.getAttribute("data-item-name");
-      if(confirm("Delete "+type+' "'+name+'"? This cannot be undone.')){
-        if(type==="crop") saveCustomCrops(getCustomCrops().filter(function(c){ return c.id!==id; }));
-        else saveCustomAnimals(getCustomAnimals().filter(function(a){ return a.id!==id; }));
-        state.open=null; renderContent();
-      }
-    });
-  });
-  // Photo upload
-  el.querySelectorAll("[data-photo-upload]").forEach(function(inp){
-    inp.addEventListener("change", function(){
-      var f=this.files[0]; if(!f) return;
-      var key=this.getAttribute("data-pk"), id=this.getAttribute("data-pid");
-      var reader=new FileReader();
-      reader.onload=function(ev){ addPhoto(key,id,ev.target.result); renderContent(); };
-      reader.readAsDataURL(f);
-    });
-  });
-  // Photo view
-  el.querySelectorAll("[data-photo-view]").forEach(function(div){
-    div.addEventListener("click", function(){
-      var key=this.getAttribute("data-pk"), id=this.getAttribute("data-pid"), i=parseInt(this.getAttribute("data-pi"));
-      var photos=getPhotos(key,id); if(!photos[i]) return;
-      openModal('<div style="text-align:right;margin-bottom:8px"><button id="closeViewBtn" class="btn-o" style="padding:6px 14px">X Close</button></div><img src="'+photos[i]+'" style="width:100%;border-radius:8px"/>');
-      G("closeViewBtn").addEventListener("click", closeModal);
-    });
-  });
-  // Photo delete
-  el.querySelectorAll("[data-photo-del]").forEach(function(btn){
-    btn.addEventListener("click", function(e){
-      e.stopPropagation();
-      var key=this.getAttribute("data-pk"), id=this.getAttribute("data-pid"), i=parseInt(this.getAttribute("data-pi"));
-      delPhoto(key,id,i); renderContent();
-    });
-  });
-  // Add crop/animal toggle
-  var acb=G("addCropTogBtn"); if(acb) acb.addEventListener("click",function(){ var w=G("addCropWrap"); if(w) w.style.display=w.style.display==="none"?"block":"none"; });
-  var aab=G("addAnimalTogBtn"); if(aab) aab.addEventListener("click",function(){ var w=G("addAnimalWrap"); if(w) w.style.display=w.style.display==="none"?"block":"none"; });
-  // Save crop/animal
-  var scb=G("saveCropBtn"); if(scb) scb.addEventListener("click",saveCrop);
-  var sab=G("saveAnimalBtn"); if(sab) sab.addEventListener("click",saveAnimal);
-  // Task add
-  var atb=G("addTaskBtn"); if(atb) atb.addEventListener("click",addTask);
-  // Task toggle done
-  el.querySelectorAll("[data-task-done]").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      var id=this.getAttribute("data-task-done"), cur=this.getAttribute("data-task-cur");
-      var tasks=getTasks(); var i=tasks.findIndex(function(t){ return t.id===id; });
-      if(i>=0){
-        tasks[i].status=(cur==="done")?"pending":"done";
-        if(tasks[i].status==="done"){ tasks[i].doneBy=state.user.name; tasks[i].doneAt=new Date().toLocaleString(); saveEntry("Completed: "+tasks[i].title,"Task completed"); }
-        saveTasks(tasks); renderContent();
-      }
-    });
-  });
-  // Task delete
-  el.querySelectorAll("[data-task-del]").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      var id=this.getAttribute("data-task-del");
-      if(confirm("Delete this task?")){ saveTasks(getTasks().filter(function(t){ return t.id!==id; })); renderContent(); }
-    });
-  });
-  // New garden button
-  var ngb=G("newGardenBtn"); if(ngb) ngb.addEventListener("click",newGardenModal);
+// Tab switching
+function showTab(tab) {
+  document.getElementById('loginTab').classList.add('hidden');
+  document.getElementById('registerTab').classList.add('hidden');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   
-  // Garden photo upload
-  el.querySelectorAll("[data-gdn-photo-add]").forEach(function(inp){
-    inp.addEventListener("change",function(){
-      var f=this.files[0]; if(!f) return;
-      var gardenId=this.getAttribute("data-gdn-photo-add");
-      var reader=new FileReader();
-      reader.onload=function(ev){
-        var g=getGarden(gardenId);
-        if(!g.photos)g.photos=[];
-        g.photos.push(ev.target.result);
-        updateGarden(gardenId,g);
-        addNotification("Photo added to "+g.name,state.user.role,state.user.field);
-        renderContent();
-      };
-      reader.readAsDataURL(f);
-    });
-  });
-  
-  // Delete garden photo
-  el.querySelectorAll("[data-gdn-photo-del]").forEach(function(btn){
-    btn.addEventListener("click",function(e){
-      e.stopPropagation();
-      var idx=parseInt(this.getAttribute("data-gdn-photo-del"));
-      var urlParts=window.location.href.split("#");
-      var gardenId=state.open;
-      var g=getGarden(gardenId);
-      if(g&&g.photos){
-        g.photos.splice(idx,1);
-        updateGarden(gardenId,g);
-        renderContent();
-      }
-    });
-  });
-  
-  // Add garden activity
-  el.querySelectorAll("[data-gdn-add-act]").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      var gardenId=this.getAttribute("data-gdn-add-act");
-      var stage=(G("gdn_stage_"+gardenId)||{value:""}).value.trim();
-      var activity=(G("gdn_activity_"+gardenId)||{value:""}).value.trim();
-      if(!stage||!activity){ alert("Please fill in stage and activity"); return; }
-      var g=getGarden(gardenId);
-      if(!g){ alert("Garden not found"); return; }
-      if(!g.activities)g.activities=[];
-      var act={id:"act_"+Date.now(),stage:stage,activity:activity,time:new Date().toLocaleString(),by:state.user.name};
-      g.activities.unshift(act);
-      updateGarden(gardenId,g);
-      saveEntry(g.name+" - "+activity,"Crop observation");
-      addNotification("Activity logged in "+g.name+": "+activity,state.user.role,state.user.field);
-      if(G("gdn_stage_"+gardenId))G("gdn_stage_"+gardenId).value="";
-      if(G("gdn_activity_"+gardenId))G("gdn_activity_"+gardenId).value="";
-      renderContent();
-    });
-  });
-  
-  // Delete garden activity
-  el.querySelectorAll("[data-gdn-del-act]").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      var actId=this.getAttribute("data-gdn-del-act");
-      var gardenId=this.getAttribute("data-gdn-id");
-      var g=getGarden(gardenId);
-      if(g&&g.activities){
-        g.activities=g.activities.filter(function(a){return a.id!==actId;});
-        updateGarden(gardenId,g);
-        renderContent();
-      }
-    });
-  });
-  
-  // Add garden task
-  el.querySelectorAll("[data-gdn-add-task]").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      var gardenId=this.getAttribute("data-gdn-add-task");
-      var title=(G("gdn_task_"+gardenId)||{value:""}).value.trim();
-      var due=(G("gdn_task_due_"+gardenId)||{value:""}).value;
-      var pri=(G("gdn_task_pri_"+gardenId)||{value:"normal"}).value;
-      if(!title){ alert("Task title required"); return; }
-      var g=getGarden(gardenId);
-      if(!g){ alert("Garden not found"); return; }
-      if(!g.tasks)g.tasks=[];
-      var members=getMembers();
-      var sectionManager=""; 
-      for(var i=0;i<members.length;i++){
-        if(members[i].field===g.location&&(members[i].role.includes("Manager")||members[i].role==="Agronomist")){
-          sectionManager=members[i].name;
-          break;
-        }
-      }
-      var tsk={id:"tsk_"+Date.now(),title:title,dueDate:due,priority:pri,status:"pending",createdBy:state.user.name,assignedTo:sectionManager||"Crop Worker"};
-      g.tasks.unshift(tsk);
-      updateGarden(gardenId,g);
-      addNotification("New task in "+g.name+": "+title,(sectionManager||"Crop Worker"),g.location);
-      if(G("gdn_task_"+gardenId))G("gdn_task_"+gardenId).value="";
-      if(G("gdn_task_due_"+gardenId))G("gdn_task_due_"+gardenId).value="";
-      renderContent();
-    });
-  });
-  
-  // Delete garden task
-  el.querySelectorAll("[data-gdn-del-task]").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      var taskId=this.getAttribute("data-gdn-del-task");
-      var gardenId=this.getAttribute("data-gdn-id");
-      var g=getGarden(gardenId);
-      if(g&&g.tasks){
-        g.tasks=g.tasks.filter(function(t){return t.id!==taskId;});
-        updateGarden(gardenId,g);
-        renderContent();
-      }
-    });
-  });
-  // HR add member
-  var hab=G("hrAddBtn"); if(hab) hab.addEventListener("click",hrAddMember);
-  // HR edit member
-  el.querySelectorAll("[data-hr-edit]").forEach(function(btn){
-    btn.addEventListener("click",function(){ openEditMember(parseInt(this.getAttribute("data-hr-edit"))); });
-  });
-  // HR delete member
-  el.querySelectorAll("[data-hr-del]").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      var id=parseInt(this.getAttribute("data-hr-del")), name=this.getAttribute("data-hr-name");
-      if(confirm('Delete member "'+name+'"? They will no longer be able to log in.')){
-        saveMembers(getMembers().filter(function(m){ return m.id!==id; })); renderContent();
-      }
-    });
-  });
-  // GPS buttons
-  var gs=G("gpsStartBtn"); if(gs) gs.addEventListener("click",gpsStart);
-  var gm=G("gpsMarkBtn");  if(gm) gm.addEventListener("click",gpsMark);
-  var gst=G("gpsStopBtn"); if(gst) gst.addEventListener("click",gpsStop);
-  var gr=G("gpsResetBtn"); if(gr) gr.addEventListener("click",gpsReset);
-  var gp=G("gpsSaveBtn");  if(gp) gp.addEventListener("click",gpsPhoto);
-  var gt=G("gpsTestBtn");  if(gt) gt.addEventListener("click",gpsTest);
-  el.querySelectorAll("[data-del-plot]").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      var i=parseInt(this.getAttribute("data-del-plot"));
-      var saved=ls("af_land",[]); saved.splice(i,1); lss("af_land",saved); renderContent();
-    });
-  });
-  // Logout
-  var lb=G("logoutBtn"); if(lb) lb.addEventListener("click",doLogout);
-  // Profile sync btn
-  var psb=G("profileSyncBtn"); if(psb) psb.addEventListener("click",doSync);
-  // Profile show install guide
-  var pig=G("showInstallBtn"); if(pig) pig.addEventListener("click",function(){ G("installGuide").style.display="block"; lss("af_guide_seen",false); window.scrollTo(0,0); });
-}
-
-// --- ENTRY FORM ---
-function entryFormHTML(ctx){
-  var cats = getCategories();
-  return '<div class="entry-form">'+
-    '<div style="font-size:13px;font-weight:700;color:#1a5c2a;margin-bottom:8px">Add '+(state.online?"":"offline ")+'entry</div>'+
-    '<select id="ef_cat_'+ctx+'" class="fi">'+cats.map(function(c){ return '<option>'+esc(c)+'</option>'; }).join("")+'</select>'+
-    '<textarea id="ef_txt_'+ctx+'" class="fi" rows="3" style="resize:vertical" placeholder="What did you observe, do or want the team to know?"></textarea>'+
-    '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'+
-    '<button class="btn-g" data-ef-ctx="'+ctx+'">Save'+(state.online?"":" offline")+'</button>'+
-    '<span style="font-size:11px;color:'+(state.online?"#1a5c2a":"#e65100")+'">'+(state.online?"Syncs immediately":"Syncs when online")+'</span>'+
-    '</div><div id="ef_msg_'+ctx+'" style="min-height:14px;margin-top:6px;font-size:12px"></div></div>';
-}
-
-function submitEntry(ctx){
-  var txt=(G("ef_txt_"+ctx)||{value:""}).value.trim();
-  var cat=(G("ef_cat_"+ctx)||{value:"Observation"}).value;
-  var msgEl=G("ef_msg_"+ctx);
-  if(!txt){ if(msgEl){msgEl.style.color="#c0392b";msgEl.textContent="Please write something first.";} return; }
-  saveEntry(txt,cat);
-  if(G("ef_txt_"+ctx)) G("ef_txt_"+ctx).value="";
-  if(msgEl){ msgEl.style.color="#1a5c2a"; msgEl.textContent=state.online?"Saved and syncing...":"Saved offline - will sync when online."; }
-  setTimeout(function(){ var m=G("ef_msg_"+ctx); if(m) m.textContent=""; },3000);
-  if(state.online) setTimeout(function(){ if(state.tab==="feed") renderContent(); },900);
-}
-
-function getCategories(){
-  var base=["Observation","Task completed","Problem found","Weather note","Question for team"];
-  var extra={
-    "CEO":["Management decision","Finance update","Visitor record","Farm inspection"],
-    "General Manager":["Management decision","Visitor record","Field inspection"],
-    "Finance Manager":["Expense record","Income record","Budget note","Payment made"],
-    "HR Manager":["Staff attendance","Leave request","HR notice"],
-    "Agronomist":["Soil test result","Pest sighting","Fertilizer applied","Spray record"],
-    "Crop Worker":["Crop observation","Pest sighting","Fertilizer applied","Irrigation done","Harvest record","Weeding done","Garden update"],
-    "Animal Worker":["Animal observation","Vaccination done","Feeding record","Medication given","Disease sign","Milking record"],
-    "Irrigation Worker":["Irrigation done","Water level","Equipment issue"],
-    "Store Manager":["Stock in","Stock out","Low stock alert","Inventory count"],
-    "Security":["Gate entry","Gate exit","Incident report","Suspicious activity","Visitor log"]
-  };
-  return base.concat(extra[state.user.role]||[]);
-}
-
-// --- ENTRIES LIST ---
-function renderEntries(entries){
-  if(!entries.length) return '<div class="card" style="text-align:center;color:#aaa;padding:20px">No entries yet.</div>';
-  return entries.map(function(e){
-    var isMine=e.by===state.user.name;
-    var canDel=isMine||["CEO","General Manager"].includes(state.user.role);
-    var dc=e._p?"#e65100":isMine?"#1565c0":"#1a5c2a";
-    var rd=ROLES[e.role]||{c:"#666",bg:"#eee"};
-    return '<div class="entry-item">'+
-      '<div class="entry-dot" style="background:'+dc+'"></div>'+
-      '<div style="flex:1">'+
-        '<div style="font-size:11px;color:#888;margin-bottom:2px">'+esc(e.by)+
-        ' <span class="rp" style="background:'+rd.bg+';color:'+rd.c+'">'+esc(e.role)+'</span></div>'+
-        '<div style="font-size:13px;color:#222;line-height:1.5;margin-bottom:4px">'+esc(e.text||"")+'</div>'+
-        '<div style="display:flex;flex-wrap:wrap;gap:4px;font-size:11px">'+
-          '<span style="background:#f0f0f0;border-radius:4px;padding:1px 6px;color:#777">'+esc(e.at||"")+'</span>'+
-          (e.field?'<span style="background:#f0f0f0;border-radius:4px;padding:1px 6px;color:#777">&#128205;'+esc(e.field)+'</span>':'')+
-          (e.category?'<span style="background:#e8f5e9;color:#1a5c2a;border-radius:4px;padding:1px 6px">'+esc(e.category)+'</span>':'')+
-          '<span style="color:'+dc+'">'+(e._p?"Pending sync":e.synced?"Synced":"Local")+'</span>'+
-        '</div>'+
-      '</div>'+
-      (canDel?'<button data-del-entry="'+e.id+'" class="btn-r">X</button>':'')+
-    '</div>';
-  }).join("");
-}
-
-// --- PHOTO GRID ---
-function photoGrid(key, id){
-  var photos = getPhotos(key,id);
-  var html = '<div class="sec" style="margin-top:10px">Photos ('+photos.length+')</div><div class="photo-grid">';
-  var slots = Math.max(6, photos.length+1);
-  for(var i=0;i<slots&&i<9;i++){
-    if(photos[i]){
-      html += '<div class="photo-slot" data-photo-view="1" data-pk="'+key+'" data-pid="'+id+'" data-pi="'+i+'">'+
-        '<img src="'+photos[i]+'" alt="photo"/>'+
-        '<div data-photo-del="1" data-pk="'+key+'" data-pid="'+id+'" data-pi="'+i+'" '+
-        'style="position:absolute;bottom:3px;right:3px;background:rgba(160,0,0,.8);color:#fff;font-size:9px;padding:2px 5px;border-radius:4px;cursor:pointer">Del</div>'+
-      '</div>';
-    } else if(i===photos.length){
-      html += '<div class="photo-slot">'+
-        '<span style="font-size:20px">&#128247;</span><span>Add photo</span>'+
-        '<input type="file" accept="image/*" data-photo-upload="1" data-pk="'+key+'" data-pid="'+id+'"/>'+
-      '</div>';
-    }
-  }
-  return html+'</div>';
-}
-
-// --- ITEM LIST ---
-function itemList(items, photoKey){
-  if(!items.length) return '<div class="card" style="text-align:center;color:#aaa;padding:20px">None added yet.</div>';
-  return items.map(function(item){
-    var isOpen = state.open===item.id;
-    var canDel = item.custom && ["CEO","General Manager","Agronomist","Crop Worker","Animal Worker"].includes(state.user.role);
-    var html = '<div class="xcard'+(isOpen?" open":"")+'" data-toggle="'+item.id+'">';
-    html += '<div style="display:flex;align-items:center;gap:10px">';
-    html += '<span style="font-size:26px;flex-shrink:0">'+item.em+'</span>';
-    html += '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#1a3c20">'+esc(item.name)+'</div>';
-    html += '<div style="font-size:11px;color:#888">'+esc(item.season||item.sub||"")+'</div></div>';
-    if(canDel) html += '<button data-del-item="'+item.id+'" data-item-type="'+(item.sub!==undefined?"animal":"crop")+'" data-item-name="'+esc(item.name)+'" class="btn-r" style="margin-right:6px">Del</button>';
-    html += '<span style="font-size:16px;color:#888">'+(isOpen?"&#9650;":"&#9660;")+'</span></div>';
-    if(isOpen){
-      html += photoGrid(photoKey, item.id);
-      html += '<div style="margin-top:10px">';
-      item.steps.forEach(function(s,i){
-        html += '<div class="step-row">';
-        html += '<div class="step-num">'+(i+1)+'</div>';
-        html += '<div style="flex:1"><div style="font-size:12px;font-weight:700;color:#1a3c20;margin-bottom:2px">'+esc(s.t)+'</div>';
-        html += '<div style="font-size:12px;color:#555;line-height:1.5">'+esc(s.d)+'</div>';
-        if(s.fert) html += '<span class="badge-g">&#127807; '+esc(s.fert)+'</span>';
-        if(s.med) html += '<span class="badge-b">&#128138; '+esc(s.med)+'</span>';
-        html += '</div></div>';
-      });
-      html += '</div>';
-    }
-    html += '</div>';
-    return html;
-  }).join("");
-}
-
-// --- ADD CROP FORM ---
-function addCropFormHTML(){
-  return '<button class="btn-o" style="width:100%;margin-bottom:10px" id="addCropTogBtn">+ Add New Crop or Garden</button>'+
-  '<div id="addCropWrap" style="display:none">'+
-  '<div class="add-form">'+
-  '<div style="font-size:13px;font-weight:700;color:#1a5c2a;margin-bottom:10px">+ Add Crop / Garden</div>'+
-  '<div class="g2"><div><label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Crop name *</label><input id="nc_name" class="fi" placeholder="e.g. Sweet Potato"/></div>'+
-  '<div><label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Icon</label><select id="nc_em" class="fi">'+CROP_EMOJIS.map(function(e){ return '<option value="'+e+'">'+e+'</option>'; }).join("")+'</select></div></div>'+
-  '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Season / period</label><input id="nc_season" class="fi" placeholder="e.g. Jan-Apr / Jul-Oct"/>'+
-  '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Garden / field location</label><input id="nc_loc" class="fi" placeholder="e.g. Block A, North Garden"/>'+
-  '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Growing notes (each line = one step)</label>'+
-  '<textarea id="nc_notes" class="fi" rows="4" placeholder="Land prep - plough 30cm, add compost\nPlanting - 60x60cm spacing\nHarvest - pick at 90 days"></textarea>'+
-  '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Fertilizer</label><input id="nc_fert" class="fi" placeholder="e.g. DAP 50kg/acre"/>'+
-  '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Medication / pesticide</label><input id="nc_med" class="fi" placeholder="e.g. Mancozeb for blight"/>'+
-  '<button class="btn-g" style="width:100%" id="saveCropBtn">Save Crop</button>'+
-  '<div id="nc_msg" style="font-size:12px;margin-top:6px;min-height:14px"></div>'+
-  '</div></div>';
-}
-
-function saveCrop(){
-  var name=(G("nc_name")||{value:""}).value.trim();
-  var em=(G("nc_em")||{value:"&#127807;"}).value;
-  var season=(G("nc_season")||{value:""}).value.trim();
-  var loc=(G("nc_loc")||{value:""}).value.trim();
-  var notes=(G("nc_notes")||{value:""}).value.trim();
-  var fert=(G("nc_fert")||{value:""}).value.trim();
-  var med=(G("nc_med")||{value:""}).value.trim();
-  var msgEl=G("nc_msg");
-  if(!name){ if(msgEl){msgEl.style.color="#c0392b";msgEl.textContent="Crop name is required.";} return; }
-  var steps=notes?notes.split("\n").filter(function(l){return l.trim();}).map(function(l,i){
-    var parts=l.trim().split(/[-:]/);
-    var t=parts.length>1?parts[0].trim():"Step "+(i+1);
-    var d=parts.length>1?parts.slice(1).join(":").trim():l.trim();
-    return{t:t,d:d,fert:fert,med:med};
-  }):[{t:"General",d:notes||"Added by "+state.user.name,fert:fert,med:med}];
-  var cropId="cc_"+Date.now();
-  var crop={id:cropId,em:em,name:name,season:season+(loc?" - "+loc:""),custom:true,steps:steps};
-  var cc=getCustomCrops(); cc.push(crop); saveCustomCrops(cc);
-  if(msgEl){msgEl.style.color="#1a5c2a";msgEl.textContent="Crop added!";}
-  saveEntry("Added new crop: "+name+(loc?" ("+loc+")":""),"Crop observation");
-  setTimeout(function(){state.open=cropId;renderContent();},700);
-}
-
-// --- ADD ANIMAL FORM ---
-function addAnimalFormHTML(){
-  return '<button class="btn-o" style="width:100%;margin-bottom:10px" id="addAnimalTogBtn">+ Add New Animal</button>'+
-  '<div id="addAnimalWrap" style="display:none">'+
-  '<div class="add-form">'+
-  '<div style="font-size:13px;font-weight:700;color:#1a5c2a;margin-bottom:10px">+ Add Animal</div>'+
-  '<div class="g2"><div><label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Animal name *</label><input id="na_name" class="fi" placeholder="e.g. Turkey, Sheep"/></div>'+
-  '<div><label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Icon</label><select id="na_em" class="fi">'+ANIMAL_EMOJIS.map(function(e){ return '<option value="'+e+'">'+e+'</option>'; }).join("")+'</select></div></div>'+
-  '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Type / purpose</label><input id="na_sub" class="fi" placeholder="e.g. Meat, Dairy, Layers"/>'+
-  '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Shed / location</label><input id="na_loc" class="fi" placeholder="e.g. Shed 2, East paddock"/>'+
-  '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Care notes (each line = one step)</label>'+
-  '<textarea id="na_notes" class="fi" rows="4" placeholder="Housing - 1m2 per animal\nFeeding - hay and pellets daily\nVaccination - PPR annually"></textarea>'+
-  '<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Medication / vaccination</label><input id="na_med" class="fi" placeholder="e.g. PPR vaccine annually"/>'+
-  '<button class="btn-g" style="width:100%" id="saveAnimalBtn">Save Animal</button>'+
-  '<div id="na_msg" style="font-size:12px;margin-top:6px;min-height:14px"></div>'+
-  '</div></div>';
-}
-
-function saveAnimal(){
-  var name=(G("na_name")||{value:""}).value.trim();
-  var em=(G("na_em")||{value:"&#128004;"}).value;
-  var sub=(G("na_sub")||{value:""}).value.trim();
-  var loc=(G("na_loc")||{value:""}).value.trim();
-  var notes=(G("na_notes")||{value:""}).value.trim();
-  var med=(G("na_med")||{value:""}).value.trim();
-  var msgEl=G("na_msg");
-  if(!name){ if(msgEl){msgEl.style.color="#c0392b";msgEl.textContent="Animal name is required.";} return; }
-  var steps=notes?notes.split("\n").filter(function(l){return l.trim();}).map(function(l,i){
-    var parts=l.trim().split(/[-:]/);
-    var t=parts.length>1?parts[0].trim():"Step "+(i+1);
-    var d=parts.length>1?parts.slice(1).join(":").trim():l.trim();
-    return{t:t,d:d,med:med};
-  }):[{t:"General",d:notes||"Added by "+state.user.name,med:med}];
-  var animalId="ca_"+Date.now();
-  var animal={id:animalId,em:em,name:name,sub:sub+(loc?" - "+loc:""),custom:true,steps:steps};
-  var ca=getCustomAnimals(); ca.push(animal); saveCustomAnimals(ca);
-  if(msgEl){msgEl.style.color="#1a5c2a";msgEl.textContent="Animal added!";}
-  saveEntry("Added new animal: "+name+(loc?" ("+loc+")":"")+(sub?" - "+sub:""),"Animal observation");
-  setTimeout(function(){state.open=animalId;renderContent();},700);
-}
-
-// --- OFFLINE BANNER ---
-function offlineBanner(){
-  return state.online?"":"<div class='offline-bar'>Offline - entries save on your device and sync when you reconnect.</div>";
-}
-
-// ============================================================
-// PAGE RENDERERS
-// ============================================================
-
-function pageFeed(){
-  var q=getQueue(), feed=getFeed();
-  var combined=q.filter(function(e){return !e.synced;}).map(function(e){return Object.assign({},e,{_p:true});});
-  feed.forEach(function(e){combined.push(e);});
-  combined.sort(function(a,b){return b.id>a.id?1:-1;});
-  return offlineBanner()+
-    '<div class="sec">Team Activity Feed</div>'+
-    entryFormHTML("feed")+
-    (combined.length?renderEntries(combined.slice(0,60)):
-    '<div class="card" style="text-align:center;color:#aaa;padding:24px">'+
-    '<div style="font-size:28px;margin-bottom:8px">&#127807;</div>'+
-    '<div>No entries yet. Add the first one above!</div></div>');
-}
-
-function pageTasks(){
-  var isCEO=["CEO","General Manager"].includes(state.user.role);
-  var myField=state.user.field||"";
-  var all=getTasks();
-  var visible=isCEO?all:all.filter(function(t){ return !t.section||t.section===myField||t.section==="Whole Farm"||t.assignedTo===state.user.name||t.assignedTo==="All"; });
-  var filter=state.taskFilter||"all";
-  var filtered;
-  if(filter==="mine") filtered=visible.filter(function(t){return (t.assignedTo===state.user.name||t.assignedTo==="All")&&t.status!=="done";});
-  else if(filter==="urgent") filtered=visible.filter(function(t){return t.priority==="urgent"&&t.status!=="done";});
-  else if(filter==="done") filtered=visible.filter(function(t){return t.status==="done";});
-  else filtered=visible.filter(function(t){return t.status!=="done";});
-
-  var pending=visible.filter(function(t){return t.status!=="done";}).length;
-  var urgent=visible.filter(function(t){return t.priority==="urgent"&&t.status!=="done";}).length;
-  var done=visible.filter(function(t){return t.status==="done";}).length;
-
-  var members=getMembers();
-  var secs=SECTIONS.slice();
-  members.forEach(function(m){if(m.field&&secs.indexOf(m.field)<0)secs.push(m.field);});
-
-  var h=offlineBanner();
-  // Stats
-  h+='<div class="stat-grid">';
-  h+='<div class="stat-box"><div class="stat-val">'+pending+'</div><div class="stat-lbl">Pending</div></div>';
-  h+='<div class="stat-box"><div class="stat-val" style="color:'+(urgent>0?"#a02020":"#1a5c2a")+'">'+urgent+'</div><div class="stat-lbl">Urgent</div></div>';
-  h+='<div class="stat-box"><div class="stat-val" style="color:#888">'+done+'</div><div class="stat-lbl">Done</div></div>';
-  h+='</div>';
-  // Add task form
-  h+='<div class="card"><div class="sec">Add New Task</div>';
-  h+='<input id="tk_title" class="fi" placeholder="Task title (e.g. Apply fertilizer to Tomato Block A)"/>';
-  h+='<textarea id="tk_desc" class="fi" rows="2" style="resize:vertical" placeholder="Details (optional)"></textarea>';
-  h+='<div class="g2" style="margin-bottom:8px">';
-  h+='<div><label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Section</label>';
-  h+='<select id="tk_sec" class="fi" style="margin:0"><option value="Whole Farm">Whole Farm</option>'+secs.map(function(s){return'<option value="'+esc(s)+'">'+esc(s)+'</option>';}).join("")+'</select></div>';
-  h+='<div><label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Priority</label>';
-  h+='<select id="tk_pri" class="fi" style="margin:0"><option value="normal">Normal</option><option value="urgent">URGENT</option><option value="low">Low</option></select></div>';
-  h+='</div><div class="g2" style="margin-bottom:8px">';
-  h+='<div><label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Assign to</label>';
-  h+='<select id="tk_ass" class="fi" style="margin:0"><option value="All">All / Anyone</option>'+members.map(function(m){return'<option value="'+esc(m.name)+'">'+esc(m.name)+'</option>';}).join("")+'</select></div>';
-  h+='<div><label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Due date</label>';
-  h+='<input id="tk_due" type="date" class="fi" style="margin:0"/></div>';
-  h+='</div>';
-  h+='<button class="btn-g" style="width:100%" id="addTaskBtn">+ Add Task</button>';
-  h+='<div id="tk_msg" style="font-size:12px;margin-top:6px;min-height:14px"></div></div>';
-  // Filters
-  h+='<div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;flex-wrap:wrap">';
-  [["all","All","#1a5c2a"],["mine","Mine","#1565c0"],["urgent","Urgent","#a02020"],["done","Done","#888"]].forEach(function(f){
-    var on=filter===f[0];
-    h+='<button data-task-filter="'+f[0]+'" style="padding:4px 11px;border-radius:6px;font-size:12px;cursor:pointer;border:1.5px solid '+f[2]+';background:'+(on?f[2]:"#fff")+';color:'+(on?"#fff":f[2])+'">'+f[1]+'</button>';
-  });
-  h+='</div>';
-  // Group by section
-  if(!filtered.length){
-    h+='<div class="card" style="text-align:center;padding:24px;color:#aaa"><div style="font-size:28px;margin-bottom:8px">'+( filter==="done"?"&#10003;":"&#128200;")+'</div><div>'+(filter==="done"?"No completed tasks yet":"No tasks here!"  )+'</div></div>';
+  if(tab === 'login') {
+    document.getElementById('loginTab').classList.remove('hidden');
+    document.querySelectorAll('.tab-btn')[0].classList.add('active');
   } else {
-    var bySection={};
-    filtered.forEach(function(t){ var s=t.section||"General"; if(!bySection[s])bySection[s]=[]; bySection[s].push(t); });
-    Object.keys(bySection).forEach(function(sec){
-      h+='<div style="margin-bottom:4px"><div style="font-size:12px;font-weight:700;color:#1a5c2a;margin-bottom:6px;display:flex;align-items:center;gap:6px">';
-      h+='&#128205; '+esc(sec)+' <span style="background:#ddf0e4;color:#1a5c2a;border-radius:10px;padding:1px 7px;font-size:10px">'+bySection[sec].length+'</span></div>';
-      bySection[sec].forEach(function(t){
-        var isDone=t.status==="done";
-        var isUrgent=t.priority==="urgent";
-        var canEdit=isCEO||t.createdBy===state.user.name;
-        h+='<div class="task-card" style="border-color:'+(isDone?"#ccc":isUrgent?"#f0b0b0":"#dde8dd")+';background:'+(isDone?"#fafafa":isUrgent?"#fff8f8":"#fff")+'">';
-        h+='<div class="task-check'+(isDone?" done":"")+'" data-task-done="'+t.id+'" data-task-cur="'+(isDone?"done":"pending")+'">'+(isDone?'<span style="color:#fff;font-size:12px">&#10003;</span>':'')+'</div>';
-        h+='<div style="flex:1">';
-        h+='<div style="font-size:13px;font-weight:'+(isDone?"400":"700")+';color:'+(isDone?"#aaa":"#1a3c20")+';text-decoration:'+(isDone?"line-through":"none")+';margin-bottom:3px">'+esc(t.title)+'</div>';
-        if(t.desc)h+='<div style="font-size:12px;color:#666;margin-bottom:4px">'+esc(t.desc)+'</div>';
-        h+='<div style="display:flex;flex-wrap:wrap;gap:4px;font-size:11px">';
-        if(isUrgent&&!isDone)h+='<span style="background:#fdeaea;color:#a02020;border-radius:4px;padding:1px 7px;font-weight:700">URGENT</span>';
-        if(t.assignedTo&&t.assignedTo!=="All")h+='<span style="background:#e3f2fd;color:#1565c0;border-radius:4px;padding:1px 7px">'+esc(t.assignedTo)+'</span>';
-        if(t.due)h+='<span style="background:#f0f8f0;color:#555;border-radius:4px;padding:1px 7px">Due: '+esc(t.due)+'</span>';
-        if(t.createdBy)h+='<span style="background:#f5f5f5;color:#888;border-radius:4px;padding:1px 7px">by '+esc(t.createdBy)+'</span>';
-        h+='</div></div>';
-        if(canEdit)h+='<button data-task-del="'+t.id+'" class="btn-r">X</button>';
-        h+='</div>';
-      });
-      h+='</div>';
-    });
+    document.getElementById('registerTab').classList.remove('hidden');
+    document.querySelectorAll('.tab-btn')[1].classList.add('active');
   }
-  // Done section
-  if((filter==="all"||filter==="mine")&&done>0){
-    var doneList=visible.filter(function(t){return t.status==="done";});
-    h+='<div class="sec" style="margin-top:8px">Completed ('+doneList.length+')</div>';
-    doneList.slice(0,5).forEach(function(t){
-      h+='<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#fafafa;border-radius:8px;border:1px solid #eee;margin-bottom:5px">';
-      h+='<div style="width:20px;height:20px;border-radius:50%;background:#1a5c2a;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:#fff;font-size:11px">&#10003;</span></div>';
-      h+='<div style="flex:1;font-size:12px;color:#aaa;text-decoration:line-through">'+esc(t.title)+'</div>';
-      h+='<span style="font-size:10px;color:#ccc">'+esc(t.section||"")+'</span>';
-      h+='<button data-task-del="'+t.id+'" class="btn-r" style="font-size:10px;padding:2px 6px">X</button></div>';
-    });
-  }
-  return h;
 }
 
-// --- NEW GARDEN MODAL ---
-function newGardenModal(){
-  var crops=CROPS.concat(getCustomCrops()).map(function(c){return c.name;});
-  var html='<div style="font-size:15px;font-weight:800;color:#1a3c20;margin-bottom:14px">Create New Garden</div>';
-  html+='<input id="ng_name" class="fi" placeholder="Garden name (e.g. Tomato Block A)"/>';
-  html+='<input id="ng_location" class="fi" placeholder="Location (e.g. North Farm)"/>';
-  html+='<select id="ng_crop" class="fi"><option>-- Select crop type --</option>'+crops.map(function(c){return'<option>'+esc(c)+'</option>';}).join("")+'</select>';
-  html+='<textarea id="ng_notes" class="fi" rows="2" placeholder="Notes (optional)" style="resize:vertical"></textarea>';
-  html+='<div style="font-size:12px;color:#1565c0;margin:8px 0;padding:8px;background:#e3f2fd;border-radius:6px">💡 You can add GPS area measurement and photos after creating the garden.</div>';
-  html+='<div style="display:flex;gap:8px;margin-top:4px"><button class="btn-g" style="flex:1" id="saveNewGardenBtn">Create Garden</button><button class="btn-o" style="flex:1" id="cancelNewGardenBtn">Cancel</button></div>';
-  openModal(html);
-  G("saveNewGardenBtn").addEventListener("click",function(){
-    var name=(G("ng_name")||{value:""}).value.trim();
-    var location=(G("ng_location")||{value:""}).value.trim();
-    var crop=(G("ng_crop")||{value:""}).value;
-    var notes=(G("ng_notes")||{value:""}).value.trim();
-    if(!name||!crop){ alert("Name and crop type are required"); return; }
-    var garden={
-      id:"gdn_"+Date.now(),
-      name:name,
-      location:location||"Unassigned",
-      cropType:crop,
-      notes:notes,
-      photos:[],
-      activities:[],
-      tasks:[],
-      created:new Date().toLocaleDateString(),
-      createdBy:state.user.name
-    };
-    addGarden(garden);
-    saveEntry("Created new garden: "+name+" ("+crop+") at "+location,"Crop observation");
-    addNotification("New garden created: "+name,state.user.role,location);
-    closeModal();
-    setTimeout(function(){state.open=garden.id;renderContent();},200);
-  });
-  G("cancelNewGardenBtn").addEventListener("click",closeModal);
-}
-
-function pageCropGuides(){
-  var guides=CROPS;
-  var custom=getCustomCrops();
-  var h='<div class="sec">Standard Crop Growing Guides ('+guides.length+')</div>';
-  h+='<p style="font-size:12px;color:#666;margin-bottom:10px;line-height:1.6">Step-by-step guides with fertilizer and medication for each crop stage. Tap any crop to expand.</p>';
-  h+=itemList(guides,"af_cp");
-  if(custom.length){
-    h+='<div class="sec" style="margin-top:8px">Custom Crops Added by Team ('+custom.length+')</div>';
-    h+=itemList(custom,"af_cp");
-  }
-  return h;
-}
-
-function pageMyGardens(){
-  var canCreate=["CEO","General Manager","Agronomist","Crop Worker"].includes(state.user.role);
-  var isCEO=state.user.role==="CEO";
-  var gardens=getGardens();
-  var gardenId=state.open; // Repurpose state.open for garden detail view
-  var h=offlineBanner();
+// Registration
+function doRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const code = document.getElementById('regCode').value.trim();
+  const role = document.getElementById('regRole').value;
+  const msg = document.getElementById('regMsg');
   
-  // If viewing a garden detail
-  if(gardenId && gardenId.startsWith("gdn_")){
-    var g=getGarden(gardenId);
-    if(!g){ h+='<div class="card" style="text-align:center;color:#aaa;padding:20px">Garden not found.</div>'; return h; }
-    
-    h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
-    h+='<button class="btn-o" style="padding:6px 11px;font-size:12px" onclick="state.open=null;renderContent()">← Back</button>';
-    h+='<div style="flex:1"><div style="font-size:16px;font-weight:800;color:#1a3c20">'+esc(g.name)+'</div>';
-    h+='<div style="font-size:12px;color:#888">'+esc(g.cropType)+' • '+esc(g.location)+'</div></div>';
-    h+='</div>';
-    
-    // Garden summary
-    h+='<div class="card" style="margin-bottom:10px">';
-    h+='<div class="g2" style="margin-bottom:8px">';
-    h+='<div><label style="font-size:11px;color:#888;font-weight:700">Area</label><div style="font-size:14px;font-weight:700;color:#1a5c2a">'+(g.gpsArea?g.gpsArea.acres+" ac ("+g.gpsArea.ha+" ha)":"Not measured")+'</div></div>';
-    h+='<div><label style="font-size:11px;color:#888;font-weight:700">Created</label><div style="font-size:12px">'+esc(g.created||"-")+'</div></div>';
-    h+='</div>';
-    h+='<div style="border-top:1px solid #ddd;padding-top:10px"><label style="font-size:12px;font-weight:700;color:#888;display:block;margin-bottom:4px">Notes</label><div style="font-size:13px;color:#555;line-height:1.6">'+esc(g.notes||"No notes yet")+'</div></div>';
-    h+='</div>';
-    
-    // Photos
-    h+='<div class="card" style="margin-bottom:10px"><div class="sec">Photos ('+((g.photos||[]).length)+')</div>';
-    h+='<div class="photo-grid">';
-    for(var i=0;i<Math.max(6,(g.photos||[]).length+1);i++){
-      if(g.photos&&g.photos[i]){
-        h+='<div class="photo-slot" style="cursor:pointer;border:none;padding:0" onclick="openModal(\'<img src=\\\u0022'+g.photos[i].replace(/"/g,"&quot;")+'\\\u0022 style=\\\u0022width:100%;border-radius:8px\\\u0022/><button class=\\\u0022btn-r\\\u0022 style=\\\u0022margin-top:10px;width:100%\\\u0022 onclick=\\\u0022closeModal()\\\u0022>Close</button>\')">';
-        h+='<img src="'+g.photos[i]+'" style="width:100%;height:100%;object-fit:cover"/>';
-        h+='<div style="position:absolute;bottom:3px;right:3px;background:rgba(160,0,0,.8);color:#fff;font-size:9px;padding:2px 5px;border-radius:4px;cursor:pointer" data-gdn-photo-del="'+i+'">Del</div></div>';
-      } else if(i===((g.photos||[]).length)){
-        h+='<div class="photo-slot" style="cursor:pointer" onclick="document.getElementById(\'gdn_photo_'+gardenId+'\').click()">';
-        h+='<span style="font-size:20px">&#128247;</span><span>Add</span></div>';
-        h+='<input type="file" id="gdn_photo_'+gardenId+'" accept="image/*" style="display:none" data-gdn-photo-add="'+gardenId+'"/>';
-      }
-    }
-    h+='</div></div>';
-    
-    // Activities
-    h+='<div class="card" style="margin-bottom:10px"><div class="sec">Activity Log</div>';
-    if(g.activities&&g.activities.length){
-      g.activities.forEach(function(a){
-        h+='<div style="border-left:3px solid #1a5c2a;padding:8px 12px;margin-bottom:8px;background:#f7fdf8;border-radius:6px">';
-        h+='<div style="font-size:12px;font-weight:700;color:#1a3c20">'+esc(a.stage)+'</div>';
-        h+='<div style="font-size:12px;color:#555;margin:3px 0">'+esc(a.activity)+'</div>';
-        h+='<div style="font-size:11px;color:#888">'+esc(a.time)+' • '+esc(a.by)+'</div>';
-        if(isCEO)h+='<button data-gdn-del-act="'+a.id+'" data-gdn-id="'+gardenId+'" class="btn-r" style="margin-top:4px;font-size:10px;padding:2px 6px">Delete</button>';
-        h+='</div>';
-      });
-    } else {
-      h+='<div style="font-size:12px;color:#aaa;padding:10px;text-align:center">No activities logged yet.</div>';
-    }
-    h+='</div>';
-    
-    // Add activity form
-    h+='<div class="card" style="margin-bottom:10px"><div class="sec">Log Activity</div>';
-    h+='<input id="gdn_stage_'+gardenId+'" class="fi" placeholder="Stage (e.g. Planting, Vegetative, Flowering)"/>';
-    h+='<textarea id="gdn_activity_'+gardenId+'" class="fi" rows="2" placeholder="What was done? (e.g. Applied DAP fertilizer, 50kg/acre)" style="resize:vertical"></textarea>';
-    h+='<button class="btn-g" data-gdn-add-act="'+gardenId+'" style="width:100%">Log Activity</button></div>';
-    
-    // Garden tasks
-    h+='<div class="card"><div class="sec">Garden Tasks</div>';
-    if(g.tasks&&g.tasks.length){
-      g.tasks.forEach(function(t){
-        h+='<div style="padding:9px;border:1px solid #dde8dd;border-radius:8px;margin-bottom:8px;background:'+(t.status==="done"?"#fafafa":"#fff")+'">';
-        h+='<div style="display:flex;align-items:start;gap:8px;margin-bottom:4px">';
-        h+='<div style="flex:1"><div style="font-size:13px;font-weight:'+(t.status==="done"?"400":"700")+';color:'+(t.status==="done"?"#aaa":"#1a3c20")+';text-decoration:'+(t.status==="done"?"line-through":"none")+'">'+esc(t.title)+'</div>';
-        h+='<div style="font-size:11px;color:#888">'+esc(t.dueDate||"-")+' • '+esc(t.assignedTo||"-")+'</div></div>';
-        if(isCEO){
-          h+='<button data-gdn-edit-task="'+t.id+'" data-gdn-id="'+gardenId+'" class="btn-b" style="font-size:10px;padding:3px 8px">Edit</button>';
-          h+='<button data-gdn-del-task="'+t.id+'" data-gdn-id="'+gardenId+'" class="btn-r" style="font-size:10px;padding:3px 8px">Del</button>';
-        }
-        h+='</div></div>';
-      });
-    } else {
-      h+='<div style="font-size:12px;color:#aaa;padding:10px;text-align:center">No tasks yet (CEO can add)</div>';
-    }
-    if(isCEO){
-      h+='<div style="margin-top:8px;padding:10px;background:#f4faf5;border-radius:8px">';
-      h+='<input id="gdn_task_'+gardenId+'" class="fi" placeholder="Task title (e.g. Apply Mancozeb for blight)" style="margin-bottom:6px"/>';
-      h+='<div class="g2" style="margin-bottom:6px"><input id="gdn_task_due_'+gardenId+'" type="date" class="fi" style="margin:0"/><select id="gdn_task_pri_'+gardenId+'" class="fi" style="margin:0"><option value="normal">Normal</option><option value="urgent">URGENT</option></select></div>';
-      h+='<button class="btn-g" data-gdn-add-task="'+gardenId+'" style="width:100%;font-size:12px">+ Add Task</button></div>';
-    }
-    h+='</div>';
-    
-    return h;
+  if(!name) { msg.className='message err'; msg.textContent='Name required'; return; }
+  if(!code || code.length < 4) { msg.className='message err'; msg.textContent='Code must be 4 digits'; return; }
+  
+  const users = getUsers();
+  if(users.find(u => u.email === email)) {
+    msg.className='message err'; msg.textContent='Email already registered'; return;
   }
   
-  // Garden list view
-  h+='<div class="sec">My Gardens ('+(gardens.length)+')</div>';
-  h+='<p style="font-size:12px;color:#666;margin-bottom:10px">Track each garden with photos, activity log, and tasks.</p>';
+  const newUser = {id: Date.now(), name, email, code, role, joined: new Date().toLocaleDateString()};
+  saveUser(newUser);
   
-  if(canCreate){
-    h+='<button class="btn-g" style="width:100%;margin-bottom:10px" id="newGardenBtn">+ New Garden</button>';
-  }
+  msg.className='message ok';
+  msg.textContent='✅ Account created! Switching to login...';
   
-  if(gardens.length){
-    gardens.forEach(function(g){
-      var acts=(g.activities||[]).length;
-      var tasks=(g.tasks||[]).length;
-      h+='<div class="card" style="cursor:pointer;border:1.5px solid #dde8dd" onclick="state.open=\''+g.id+'\';renderContent()">';
-      h+='<div style="display:flex;align-items:center;gap:10px">';
-      h+='<div style="flex:1"><div style="font-size:13px;font-weight:700;color:#1a3c20">'+esc(g.name)+'</div>';
-      h+='<div style="font-size:11px;color:#888">'+esc(g.cropType)+' • '+esc(g.location)+'</div>';
-      h+='<div style="font-size:11px;color:#1a5c2a;margin-top:3px">📸 '+((g.photos||[]).length)+' photos • 📝 '+acts+' activities • ✓ '+tasks+' tasks</div></div>';
-      h+='<span style="font-size:20px">→</span></div></div>';
-    });
-  } else {
-    h+='<div class="card" style="text-align:center;padding:28px;color:#aaa"><div style="font-size:34px;margin-bottom:8px">🌱</div><div style="font-size:14px;font-weight:700;color:#555;margin-bottom:5px">No gardens added yet</div><div style="font-size:12px">Create your first garden to start tracking.</div></div>';
-  }
+  setTimeout(() => {
+    showTab('login');
+    document.getElementById('loginName').value = name;
+    document.getElementById('loginCode').value = code;
+  }, 1000);
+}
+
+// Login
+function doLogin() {
+  const name = document.getElementById('loginName').value.trim().toLowerCase();
+  const code = document.getElementById('loginCode').value.trim();
+  const msg = document.getElementById('loginMsg');
   
-  return h;
-}
-
-function pageAnimalGuides(){
-  var guides=ANIMALS;
-  var custom=getCustomAnimals();
-  var h='<div class="sec">Standard Animal Care Guides ('+guides.length+')</div>';
-  h+='<p style="font-size:12px;color:#666;margin-bottom:10px;line-height:1.6">Vaccination schedules, feeding, medication and disease management. Tap any animal to expand.</p>';
-  h+=itemList(guides,"af_ap");
-  if(custom.length){
-    h+='<div class="sec" style="margin-top:8px">Custom Animals Added by Team ('+custom.length+')</div>';
-    h+=itemList(custom,"af_ap");
-  }
-  return h;
-}
-
-function pageMyAnimals(){
-  var custom=getCustomAnimals();
-  var canAdd=["CEO","General Manager","Agronomist","Crop Worker","Animal Worker"].includes(state.user.role);
-  var h=offlineBanner();
-  h+='<div class="sec">My Farm Animals ('+custom.length+')</div>';
-  h+='<p style="font-size:12px;color:#666;margin-bottom:10px;line-height:1.6">Your farm\'s animal groups. Add a new animal type or shed below. Tap any to see photos and care notes.</p>';
-  h+=entryFormHTML("my_animals");
-  if(canAdd)h+=addAnimalFormHTML();
-  if(custom.length){h+=itemList(custom,"af_ap");}
-  else{h+='<div class="card" style="text-align:center;padding:28px;color:#aaa"><div style="font-size:34px;margin-bottom:8px">&#128004;</div><div style="font-size:14px;font-weight:700;color:#555;margin-bottom:5px">No animals added yet</div><div style="font-size:12px">Tap + Add New Animal above to record your first animal group or shed.</div></div>';}
-  return h;
-}
-
-function pageLand(){
-  var saved=ls("af_land",[]);
-  return offlineBanner()+
-  '<div class="sec">GPS Land Measurement</div>'+
-  '<div class="card">'+
-  '<div style="background:#e3f2fd;border-radius:8px;padding:10px;margin-bottom:12px;font-size:12px;color:#1565c0;line-height:1.7">'+
-  '<strong>How to use:</strong><br/>'+
-  '1. Tap <strong>Test GPS</strong> first to check your signal<br/>'+
-  '2. Go to a corner of your land<br/>'+
-  '3. Tap <strong>Start</strong> and walk slowly around the boundary<br/>'+
-  '4. Tap <strong>Stop</strong> when you return to the start<br/>'+
-  '<em>No signal? Use <strong>Mark Point</strong> at each corner instead.</em></div>'+
-  '<div class="stat-grid">'+
-  '<div class="stat-box"><div class="stat-val" id="gps_pts">0</div><div class="stat-lbl">GPS points</div></div>'+
-  '<div class="stat-box"><div class="stat-val" id="gps_acres">0</div><div class="stat-lbl">Acres</div></div>'+
-  '<div class="stat-box"><div class="stat-val" id="gps_ha">0</div><div class="stat-lbl">Hectares</div></div>'+
-  '</div>'+
-  '<div class="map-wrap">'+
-  '<canvas id="mapCanvas"></canvas>'+
-  '<div class="map-hint"><div id="mapStatus" style="font-size:13px;font-weight:700;color:#1a5c2a">Ready to measure</div>'+
-  '<div style="font-size:11px;color:#666;margin-top:3px">Press Start then walk the boundary</div></div>'+
-  '</div>'+
-  '<div style="display:flex;gap:7px;flex-wrap:wrap">'+
-  '<button id="gpsTestBtn" class="btn-o">Test GPS</button>'+
-  '<button id="gpsStartBtn" class="btn-g" style="width:auto;padding:9px 16px">Start</button>'+
-  '<button id="gpsMarkBtn" class="btn-o" style="display:none">Mark Point</button>'+
-  '<button id="gpsStopBtn" style="display:none;background:#fdeaea;color:#a02020;border:1.5px solid #f0b0b0;border-radius:8px;padding:9px 16px;cursor:pointer;font-weight:700">Stop</button>'+
-  '<button id="gpsResetBtn" class="btn-o">Reset</button>'+
-  '<button id="gpsSaveBtn" class="btn-o">Save Map</button>'+
-  '</div></div>'+
-  '<div class="sec">Saved Plots ('+saved.length+')</div>'+
-  (saved.length?saved.slice().reverse().map(function(m,i){
-    return '<div class="card" style="display:flex;align-items:center;gap:10px">'+
-    '<span style="font-size:24px">&#128208;</span>'+
-    '<div style="flex:1"><div style="font-size:13px;font-weight:700">'+esc(m.name)+'</div>'+
-    '<div style="font-size:11px;color:#888">'+esc(m.date)+' &middot; '+m.pts+' GPS points &middot; by '+esc(m.by)+'</div>'+
-    '<div style="font-size:12px;color:#1a5c2a;font-weight:700">'+m.acres+' acres &middot; '+m.ha+' ha</div></div>'+
-    '<button data-del-plot="'+(saved.length-1-i)+'" class="btn-r">Del</button></div>';
-  }).join(""):
-  '<div class="card" style="text-align:center;color:#aaa;padding:20px">No measurements saved yet.</div>');
-}
-
-function pageFinance(){
-  if(!["CEO","Finance Manager","General Manager"].includes(state.user.role))
-    return '<div class="lock"><div style="font-size:40px">&#128274;</div><p>Finance data is restricted to Finance Manager, General Manager and CEO only.</p></div>';
-  var fe=getFeed().filter(function(e){return e.category&&(e.category.includes("Expense")||e.category.includes("Income")||e.category.includes("Finance")||e.category.includes("Budget")||e.category.includes("Payment"));});
-  var h=offlineBanner()+
-  '<div class="sec">Financial Summary</div>'+
-  '<div class="stat-grid">'+
-  '<div class="stat-box"><div class="stat-val" style="font-size:14px">18.4M</div><div class="stat-lbl">Revenue (UGX)</div></div>'+
-  '<div class="stat-box"><div class="stat-val" style="font-size:14px;color:#a02020">9.75M</div><div class="stat-lbl">Expenses</div></div>'+
-  '<div class="stat-box"><div class="stat-val" style="font-size:14px;color:#1565c0">8.65M</div><div class="stat-lbl">Net profit</div></div>'+
-  '</div>'+
-  '<div class="card">'+FIN_DATA.map(function(r){
-    var bold=r[0]==="NET PROFIT";
-    return '<div class="fin-row"'+(bold?' style="font-weight:700;background:#f0f8f0;border-radius:6px;padding:7px 4px"':'')+'>'+
-    '<span style="color:#555">'+r[0]+'</span><span style="font-weight:600;color:'+r[2]+'">'+r[1]+'</span></div>';
-  }).join("")+'</div>'+
-  '<div class="sec">Log Finance Entry</div>'+entryFormHTML("finance");
-  if(fe.length){h+='<div class="sec">Finance Log</div>'+renderEntries(fe.slice(0,10));}
-  return h;
-}
-
-function pageHR(){
-  if(!["CEO","HR Manager"].includes(state.user.role))
-    return '<div class="lock"><div style="font-size:40px">&#128274;</div><p>HR information is restricted to HR Manager and CEO only.</p></div>';
-  var all=getMembers(); var isCEO=state.user.role==="CEO";
-  var h=offlineBanner()+
-  '<div class="sec">HR Log</div>'+entryFormHTML("hr")+
-  '<div class="sec">Staff Records ('+all.length+')</div>';
-  all.forEach(function(m){
-    var rd=ROLES[m.role]||{c:"#666",bg:"#eee"};
-    h+='<div class="m-row"><div class="m-av">'+m.name[0].toUpperCase()+'</div>'+
-    '<div style="flex:1"><div style="font-size:13px;font-weight:700">'+esc(m.name)+'</div>'+
-    '<div style="font-size:11px;color:#888">'+esc(m.email||m.phone||"-")+'</div>'+
-    '<div style="font-size:11px;color:#888">&#128205; '+esc(m.field||"-")+' &middot; Joined '+esc(m.joined||"-")+'</div></div>'+
-    '<span class="rp" style="background:'+rd.bg+';color:'+rd.c+'">'+esc(m.role)+'</span>'+
-    (isCEO?'<button data-hr-edit="'+m.id+'" class="btn-b" style="margin-left:4px">Edit</button>'+
-    '<button data-hr-del="'+m.id+'" data-hr-name="'+esc(m.name)+'" class="btn-r" style="margin-left:3px">Del</button>':'')+
-    '</div>';
-  });
-  h+='<div class="card" style="margin-top:6px"><div class="sec">Add New Member</div>'+
-  '<input id="hr_name" class="fi" placeholder="Full name *"/>'+
-  '<input id="hr_email" type="email" class="fi" placeholder="Email"/>'+
-  '<input id="hr_phone" class="fi" placeholder="Phone number"/>'+
-  '<input id="hr_code" type="password" maxlength="4" class="fi" placeholder="4-digit code *"/>'+
-  '<select id="hr_role" class="fi">'+Object.keys(ROLES).map(function(r){return'<option value="'+r+'">'+r+'</option>';}).join("")+'</select>'+
-  '<input id="hr_field" class="fi" placeholder="Assigned field / section"/>'+
-  '<button class="btn-g" style="width:100%" id="hrAddBtn">Add Member</button>'+
-  '<div id="hr_msg" style="font-size:12px;margin-top:6px;min-height:14px"></div></div>';
-  return h;
-}
-
-function hrAddMember(){
-  var name=(G("hr_name")||{value:""}).value.trim();
-  var email=(G("hr_email")||{value:""}).value.trim();
-  var phone=(G("hr_phone")||{value:""}).value.trim();
-  var code=(G("hr_code")||{value:""}).value.trim();
-  var role=(G("hr_role")||{value:"Crop Worker"}).value;
-  var field=(G("hr_field")||{value:""}).value.trim()||"Unassigned";
-  var msgEl=G("hr_msg");
-  if(!name||!code){if(msgEl){msgEl.style.color="#c0392b";msgEl.textContent="Name and code are required.";}return;}
-  var members=getMembers();
-  members.push({id:Date.now(),name:name,email:email,phone:phone,code:code,role:role,field:field,joined:new Date().toLocaleDateString()});
-  saveMembers(members);
-  if(msgEl){msgEl.style.color="#1a5c2a";msgEl.textContent=name+" added successfully.";}
-  setTimeout(function(){renderContent();},600);
-}
-
-function openEditMember(id){
-  var all=getMembers(); var m=null;
-  for(var i=0;i<all.length;i++){if(all[i].id===id){m=all[i];break;}}
-  if(!m) return;
-  var html='<div style="font-size:15px;font-weight:800;color:#1a3c20;margin-bottom:14px">Edit: '+esc(m.name)+'</div>';
-  html+='<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Full name</label><input id="em_name" class="fi" value="'+esc(m.name)+'"/>';
-  html+='<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Email</label><input id="em_email" type="email" class="fi" value="'+esc(m.email||"")+'"/>';
-  html+='<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Phone</label><input id="em_phone" class="fi" value="'+esc(m.phone||"")+'"/>';
-  html+='<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">New code (blank = keep current)</label><input id="em_code" type="password" maxlength="4" class="fi" placeholder="new code"/>';
-  html+='<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Role</label><select id="em_role" class="fi">'+Object.keys(ROLES).map(function(r){return'<option value="'+r+'"'+(r===m.role?" selected":"")+'>'+r+'</option>';}).join("")+'</select>';
-  html+='<label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:3px">Assigned field</label><input id="em_field" class="fi" value="'+esc(m.field||"")+'"/>';
-  html+='<div style="display:flex;gap:8px;margin-top:4px"><button class="btn-g" style="flex:1" id="applyEditBtn">Save changes</button><button class="btn-o" style="flex:1" id="cancelEditBtn">Cancel</button></div>';
-  html+='<div id="em_msg" style="font-size:12px;margin-top:6px;min-height:14px"></div>';
-  openModal(html);
-  G("applyEditBtn").addEventListener("click",function(){
-    var name=(G("em_name")||{value:""}).value.trim();
-    var email=(G("em_email")||{value:""}).value.trim();
-    var phone=(G("em_phone")||{value:""}).value.trim();
-    var code=(G("em_code")||{value:""}).value.trim();
-    var role=(G("em_role")||{value:"Crop Worker"}).value;
-    var field=(G("em_field")||{value:""}).value.trim()||"Unassigned";
-    var msgEl=G("em_msg");
-    if(!name){if(msgEl){msgEl.style.color="#c0392b";msgEl.textContent="Name is required.";}return;}
-    var members=getMembers();
-    for(var j=0;j<members.length;j++){
-      if(members[j].id===id){
-        members[j].name=name; members[j].email=email; members[j].phone=phone;
-        members[j].role=role; members[j].field=field;
-        if(code&&code.length>=4) members[j].code=code;
-        if(state.user&&state.user.id===id) state.user=Object.assign({},members[j]);
-        break;
-      }
-    }
-    saveMembers(members); lss("af_cur",state.user);
-    closeModal(); setTimeout(function(){renderContent();},200);
-  });
-  G("cancelEditBtn").addEventListener("click",closeModal);
-}
-
-function pageWorkers(){
-  var all=getMembers(); var fields={};
-  all.forEach(function(m){var f=m.field||"Unassigned";if(!fields[f])fields[f]=[];fields[f].push(m);});
-  var h='<div class="sec">Workers by Assigned Field</div>';
-  Object.keys(fields).forEach(function(f){
-    h+='<div class="card" style="margin-bottom:9px"><div style="font-size:12px;font-weight:700;color:#1a5c2a;margin-bottom:8px">&#128205; '+esc(f)+'</div>';
-    fields[f].forEach(function(w){
-      var rd=ROLES[w.role]||{c:"#666",bg:"#eee"};
-      h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+
-      '<div class="m-av" style="width:28px;height:28px;font-size:11px">'+w.name[0].toUpperCase()+'</div>'+
-      '<div style="flex:1;font-size:12px;font-weight:500">'+esc(w.name)+'</div>'+
-      '<span class="rp" style="background:'+rd.bg+';color:'+rd.c+'">'+esc(w.role)+'</span></div>';
-    });
-    h+='</div>';
-  });
-  return h;
-}
-
-function pageInventory(){
-  var ie=getFeed().filter(function(e){return e.category&&(e.category.includes("Stock")||e.category.includes("Inventory"));});
-  return offlineBanner()+
-  '<div class="sec">Current Stock</div>'+
-  '<div class="card">'+STOCK.map(function(r){return'<div class="fin-row"><span style="color:#555">'+esc(r[0])+'</span><span style="font-weight:600">'+esc(r[1])+'</span></div>';}).join("")+'</div>'+
-  '<div class="sec">Log Stock Movement</div>'+entryFormHTML("inventory")+
-  (ie.length?'<div class="sec">Store Log</div>'+renderEntries(ie.slice(0,10)):"");
-}
-
-function pageSecurity(){
-  var se=getFeed().filter(function(e){return e.role==="Security"||(e.category&&(e.category.includes("Gate")||e.category.includes("Incident")||e.category.includes("Visitor log")));});
-  return offlineBanner()+
-  '<div class="sec">Security Log</div>'+entryFormHTML("security")+
-  '<div class="sec">Security Entries</div>'+
-  (se.length?renderEntries(se.slice(0,20)):'<div class="card" style="text-align:center;color:#aaa;padding:20px">No security entries yet.</div>');
-}
-
-function pageReports(){
-  if(!["CEO","General Manager","Finance Manager","Agronomist","Store Manager"].includes(state.user.role))
-    return '<div class="lock"><div style="font-size:40px">&#128274;</div><p>Reports are restricted to managers and above.</p></div>';
-  var p=getQueue().filter(function(e){return !e.synced;}).length;
-  return offlineBanner()+
-  '<div class="sec">Farm Reports</div>'+entryFormHTML("reports")+
-  '<div class="card" style="margin-bottom:9px">'+
-  '<div style="font-size:13px;font-weight:700;color:#1a3c20;margin-bottom:6px">Farm Overview</div>'+
-  '<div style="font-size:12px;color:#555;line-height:1.8">'+
-  'Crop guides: <b>'+CROPS.length+'</b> standard &middot; <b>'+getCustomCrops().length+'</b> custom<br/>'+
-  'Animal guides: <b>'+ANIMALS.length+'</b> standard &middot; <b>'+getCustomAnimals().length+'</b> custom<br/>'+
-  'Team members: <b>'+getMembers().length+'</b><br/>'+
-  'Tasks: <b>'+getTasks().filter(function(t){return t.status!=="done";}).length+'</b> pending &middot; <b>'+getTasks().filter(function(t){return t.status==="done";}).length+'</b> done<br/>'+
-  'Team entries: <b>'+getFeed().length+'</b>'+
-  '</div></div>'+
-  (["CEO","General Manager","Finance Manager"].includes(state.user.role)?
-  '<div class="card" style="margin-bottom:9px">'+
-  '<div style="font-size:13px;font-weight:700;color:#1a3c20;margin-bottom:6px">Financial Snapshot</div>'+
-  '<div style="font-size:12px;color:#555">Revenue UGX 18.4M &middot; Expenses UGX 9.75M &middot; <b style="color:#1a5c2a">Net Profit UGX 8.65M (47%)</b></div></div>':"")+
-  (p?'<div class="card" style="border-color:#ffcc80;background:#fffde7"><div style="font-size:12px;color:#e65100"><b>'+p+' entries</b> waiting to sync to the team</div></div>':"");
-}
-
-function pageProfile(){
-  var rd=ROLES[state.user.role]||{l:"Member",c:"#666",bg:"#eee",tabs:[]};
-  var mp=getQueue().filter(function(e){return e.by===state.user.name&&!e.synced;}).length;
-  var ms=getFeed().filter(function(e){return e.by===state.user.name;}).length;
-  var myTasks=getTasks().filter(function(t){return (t.assignedTo===state.user.name||t.assignedTo==="All")&&t.status!=="done";}).length;
-  return '<div class="sec">My Profile</div>'+
-  '<div class="card" style="margin-bottom:10px">'+
-  '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">'+
-  '<div class="m-av" style="width:48px;height:48px;font-size:18px">'+state.user.name[0].toUpperCase()+'</div>'+
-  '<div><div style="font-size:15px;font-weight:800;color:#1a3c20">'+esc(state.user.name)+'</div>'+
-  '<div style="font-size:12px;color:#888">'+esc(state.user.email||state.user.phone||"-")+'</div>'+
-  '<span class="rp" style="background:'+rd.bg+';color:'+rd.c+';margin-top:4px;display:inline-block">'+esc(state.user.role)+'</span>'+
-  '</div></div>'+
-  '<div class="fin-row"><span style="color:#888">Assigned field</span><span style="font-weight:600">'+esc(state.user.field||"-")+'</span></div>'+
-  '<div class="fin-row"><span style="color:#888">Member since</span><span style="font-weight:600">'+esc(state.user.joined||"-")+'</span></div>'+
-  '<div class="fin-row"><span style="color:#888">Entries synced</span><span style="font-weight:600;color:#1a5c2a">'+ms+'</span></div>'+
-  '<div class="fin-row"><span style="color:#888">Pending sync</span><span style="font-weight:600;color:'+(mp>0?"#e65100":"#1a5c2a")+'">'+mp+'</span></div>'+
-  '<div class="fin-row"><span style="color:#888">My pending tasks</span><span style="font-weight:600;color:'+(myTasks>0?"#e65100":"#1a5c2a")+'">'+myTasks+'</span></div>'+
-  '</div>'+
-  '<div class="card" style="margin-bottom:10px;border:2px solid #1a5c2a">'+
-  '<div style="font-size:13px;font-weight:700;color:#1a5c2a;margin-bottom:10px">Add Arlee Farm to Your Home Screen</div>'+
-  '<div style="background:#f0f8f0;border-radius:8px;padding:9px;margin-bottom:8px">'+
-  '<div style="font-size:12px;font-weight:700;color:#1a5c2a;margin-bottom:4px">Android (Chrome)</div>'+
-  '<div style="font-size:12px;color:#555;line-height:1.7">1. Tap the <b>3-dot menu</b> at top right of Chrome<br/>2. Tap <b>"Add to Home Screen"</b> or <b>"Install App"</b><br/>3. Tap <b>Add</b></div></div>'+
-  '<div style="background:#f0f4ff;border-radius:8px;padding:9px;margin-bottom:8px">'+
-  '<div style="font-size:12px;font-weight:700;color:#1565c0;margin-bottom:4px">iPhone / iPad - use Safari only</div>'+
-  '<div style="font-size:12px;color:#555;line-height:1.7">1. Open in <b>Safari</b> (not Chrome)<br/>2. Tap <b>Share button</b> at the bottom<br/>3. Tap <b>"Add to Home Screen"</b> then <b>Add</b></div></div>'+
-  '<div style="background:#f5f5f5;border-radius:8px;padding:9px;margin-bottom:10px">'+
-  '<div style="font-size:12px;font-weight:700;color:#333;margin-bottom:4px">PC / Mac (Chrome or Edge)</div>'+
-  '<div style="font-size:12px;color:#555">Look for install icon in address bar and click Install</div></div>'+
-  '<button class="btn-g" id="showInstallBtn">Show full install guide</button></div>'+
-  '<div class="card" style="margin-bottom:10px">'+
-  '<div class="sec">Offline Sync</div>'+
-  '<div style="font-size:12px;color:#555;line-height:1.7;margin-bottom:8px">All entries save on this device first and sync to the team when online. Crop guides, animal guides and GPS land measurement work fully offline.</div>'+
-  (mp?'<button class="btn-g" id="profileSyncBtn">Sync '+mp+' pending now</button>':'<div style="font-size:12px;color:#1a5c2a">All entries synced</div>')+
-  '</div>'+
-  '<div class="card" style="margin-bottom:14px"><div class="sec">My Permissions</div>'+
-  rd.tabs.map(function(t){return'<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;margin:2px;background:#ddf0e4;color:#1a5c2a">OK '+(TAB_NAMES[t]||t)+'</span>';}).join("")+'</div>'+
-  '<button class="btn-g" style="background:#a02020" id="logoutBtn">Logout</button>';
-}
-
-// --- MODAL ---
-function openModal(html){ G("modalBox").innerHTML=html; G("modalBg").style.display="flex"; }
-function closeModal(){ G("modalBg").style.display="none"; }
-G("modalBg").addEventListener("click", function(e){ if(e.target===this) closeModal(); });
-
-// --- GPS ---
-function gpsTest(){
-  var st=G("mapStatus"); if(st) st.textContent="Testing GPS...";
-  if(!navigator.geolocation){
-    alert("GPS is not available in this browser.\n\nUse Chrome on Android or Safari on iPhone.\nMake sure Location permission is allowed.");
-    if(st) st.textContent="GPS not available in this browser";
+  if(!name || !code) {
+    msg.className='message err';
+    msg.textContent='Please fill in all fields';
     return;
   }
-  navigator.geolocation.getCurrentPosition(function(p){
-    var acc=Math.round(p.coords.accuracy);
-    var msg="GPS is working!\n\nLat: "+p.coords.latitude.toFixed(6)+"\nLon: "+p.coords.longitude.toFixed(6)+"\nAccuracy: ~"+acc+" metres";
-    if(acc>50) msg+="\n\nAccuracy is LOW ("+acc+"m). Go outdoors, away from buildings, and wait 30 seconds.";
-    else msg+="\n\nGood signal! Tap Start to measure your land.";
-    alert(msg);
-    if(st) st.textContent="GPS OK - Accuracy: ~"+acc+"m. Press Start to begin.";
-  },function(err){
-    var m="GPS Test FAILED\n\n";
-    if(err.code===1) m+="PERMISSION DENIED\nAndroid: tap lock icon in address bar > Location > Allow\niPhone: Settings > Safari > Location > Allow";
-    else if(err.code===2) m+="NO GPS SIGNAL\nGo outdoors, away from buildings. Make sure Location is ON in phone settings.";
-    else m+="GPS TIMEOUT\nMove to open area with clear sky and try again.";
-    alert(m);
-    if(st) st.textContent="GPS test failed - see instructions above";
-  },{enableHighAccuracy:true,timeout:12000,maximumAge:0});
-}
-
-function gpsStart(){
-  if(!navigator.geolocation){ alert("GPS not available. Use Chrome on Android or Safari on iPhone."); return; }
-  GPS_PTS=[];
-  G("gpsStartBtn").style.display="none";
-  G("gpsMarkBtn").style.display="inline-block";
-  G("gpsStopBtn").style.display="inline-block";
-  var st=G("mapStatus"); if(st) st.textContent="Getting GPS signal...";
-  navigator.geolocation.getCurrentPosition(function(p){
-    if(st) st.textContent="GPS active - walk the boundary slowly";
-    GPS_PTS.push({lat:p.coords.latitude,lon:p.coords.longitude});
-    updateGPSStats(); drawMap();
-    GPS_WATCH=navigator.geolocation.watchPosition(function(pos){
-      var last=GPS_PTS[GPS_PTS.length-1];
-      if(Math.abs(pos.coords.latitude-last.lat)>0.00001||Math.abs(pos.coords.longitude-last.lon)>0.00001){
-        GPS_PTS.push({lat:pos.coords.latitude,lon:pos.coords.longitude});
-        updateGPSStats(); drawMap();
-        var st2=G("mapStatus"); if(st2) st2.textContent="Recording: "+GPS_PTS.length+" points - keep walking";
-      }
-    },function(err){
-      var st2=G("mapStatus"); if(st2) st2.textContent="GPS signal lost - tap Mark Point at each corner";
-    },{enableHighAccuracy:true,timeout:30000,maximumAge:0});
-  },function(err){
-    var m="Cannot get GPS\n\n";
-    if(err.code===1) m+="Location DENIED. Allow location permission and try again.";
-    else if(err.code===2) m+="No GPS signal. Go outdoors and try again.";
-    else m+="GPS timeout. Move to open area.";
-    alert(m);
-    G("gpsStartBtn").style.display="inline-block";
-    G("gpsMarkBtn").style.display="none";
-    G("gpsStopBtn").style.display="none";
-    var st=G("mapStatus"); if(st) st.textContent="GPS failed - tap Test GPS for help";
-  },{enableHighAccuracy:true,timeout:12000,maximumAge:0});
-}
-
-function gpsMark(){
-  var st=G("mapStatus"); if(st) st.textContent="Getting location...";
-  navigator.geolocation.getCurrentPosition(function(p){
-    GPS_PTS.push({lat:p.coords.latitude,lon:p.coords.longitude});
-    updateGPSStats(); drawMap();
-    var st2=G("mapStatus"); if(st2) st2.textContent="Point "+GPS_PTS.length+" marked. Move to next corner.";
-  },function(err){
-    var m="Cannot get location. Go outdoors and try again.";
-    if(err.code===1) m="Location permission denied.";
-    alert(m);
-  },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
-}
-
-function gpsStop(){
-  if(GPS_WATCH!==null){ navigator.geolocation.clearWatch(GPS_WATCH); GPS_WATCH=null; }
-  G("gpsStartBtn").style.display="inline-block";
-  G("gpsMarkBtn").style.display="none";
-  G("gpsStopBtn").style.display="none";
-  updateGPSStats(); drawMap();
-  if(GPS_PTS.length>=3){
-    var a=calcArea(GPS_PTS), ac=(a/4047).toFixed(3), ha=(a/10000).toFixed(3);
-    var st=G("mapStatus"); if(st) st.textContent="Done: "+ac+" acres ("+ha+" ha)";
-    var saved=ls("af_land",[]);
-    var name=prompt("Name this plot (e.g. North Field):","Plot "+(saved.length+1));
-    if(name){ saved.push({name:name,acres:ac,ha:ha,pts:GPS_PTS.length,by:state.user.name,date:new Date().toLocaleDateString()}); lss("af_land",saved); renderContent(); }
-  } else {
-    var st=G("mapStatus"); if(st) st.textContent="Need at least 3 GPS points to calculate area";
+  
+  const users = getUsers();
+  const user = users.find(u => (u.name.toLowerCase() === name || u.email.toLowerCase() === name) && u.code === code);
+  
+  if(!user) {
+    msg.className='message err';
+    msg.textContent='Invalid name and code';
+    return;
   }
+  
+  setCurrentUser(user);
+  showDashboard();
 }
 
-function gpsReset(){
-  if(GPS_WATCH!==null){ navigator.geolocation.clearWatch(GPS_WATCH); GPS_WATCH=null; }
-  GPS_PTS=[];
-  G("gpsStartBtn").style.display="inline-block";
-  G("gpsMarkBtn").style.display="none";
-  G("gpsStopBtn").style.display="none";
-  var pt=G("gps_pts"),ac=G("gps_acres"),ha=G("gps_ha");
-  if(pt)pt.textContent="0"; if(ac)ac.textContent="0"; if(ha)ha.textContent="0";
-  var st=G("mapStatus"); if(st) st.textContent="Ready to measure";
-  drawMap();
+// Show dashboard
+function showDashboard() {
+  document.getElementById('authPage').classList.add('hidden');
+  document.getElementById('dashPage').classList.remove('hidden');
+  
+  const user = getCurrentUser();
+  document.getElementById('userInfo').textContent = `${user.name} (${user.role})`;
 }
 
-function gpsPhoto(){
-  var c=G("mapCanvas");
-  if(!c||GPS_PTS.length<2){ alert("No map data yet. Start measuring first."); return; }
-  var a=document.createElement("a"); a.href=c.toDataURL(); a.download="arlee_farm_map.png"; a.click();
+// Logout
+function doLogout() {
+  localStorage.removeItem('currentUser');
+  document.getElementById('authPage').classList.remove('hidden');
+  document.getElementById('dashPage').classList.add('hidden');
+  document.getElementById('loginName').value = '';
+  document.getElementById('loginCode').value = '';
 }
 
-function updateGPSStats(){
-  var pt=G("gps_pts"),ac=G("gps_acres"),ha=G("gps_ha");
-  if(pt) pt.textContent=GPS_PTS.length;
-  if(GPS_PTS.length>=3){
-    var a=calcArea(GPS_PTS);
-    if(ac) ac.textContent=(a/4047).toFixed(2);
-    if(ha) ha.textContent=(a/10000).toFixed(2);
+// Check if logged in
+window.addEventListener('load', () => {
+  const user = getCurrentUser();
+  if(user) {
+    showDashboard();
   }
-}
-
-function calcArea(pts){
-  if(pts.length<3) return 0;
-  var R=6371000, area=0;
-  for(var i=0;i<pts.length;i++){
-    var j=(i+1)%pts.length;
-    var xi=pts[i].lon*Math.PI/180*R*Math.cos(pts[i].lat*Math.PI/180), yi=pts[i].lat*Math.PI/180*R;
-    var xj=pts[j].lon*Math.PI/180*R*Math.cos(pts[j].lat*Math.PI/180), yj=pts[j].lat*Math.PI/180*R;
-    area+=xi*yj-xj*yi;
-  }
-  return Math.abs(area/2);
-}
-
-function initCanvas(){
-  var c=G("mapCanvas"); if(!c) return;
-  var w=c.offsetWidth;
-  if(!w){ setTimeout(initCanvas,100); return; }
-  c.width=w; c.height=210; MAP_CTX=c.getContext("2d"); drawMap();
-}
-
-function drawMap(){
-  var c=G("mapCanvas"); if(!MAP_CTX||!c) return;
-  MAP_CTX.clearRect(0,0,c.width,c.height);
-  MAP_CTX.fillStyle="#e8f4ea"; MAP_CTX.fillRect(0,0,c.width,c.height);
-  MAP_CTX.strokeStyle="rgba(100,160,100,0.2)"; MAP_CTX.lineWidth=1;
-  for(var x=0;x<c.width;x+=20){ MAP_CTX.beginPath(); MAP_CTX.moveTo(x,0); MAP_CTX.lineTo(x,c.height); MAP_CTX.stroke(); }
-  for(var y=0;y<c.height;y+=20){ MAP_CTX.beginPath(); MAP_CTX.moveTo(0,y); MAP_CTX.lineTo(c.width,y); MAP_CTX.stroke(); }
-  if(GPS_PTS.length<2) return;
-  var lats=GPS_PTS.map(function(p){return p.lat;}), lons=GPS_PTS.map(function(p){return p.lon;});
-  var minLat=Math.min.apply(null,lats), maxLat=Math.max.apply(null,lats);
-  var minLon=Math.min.apply(null,lons), maxLon=Math.max.apply(null,lons);
-  var pad=30, sx=(c.width-pad*2)/Math.max(maxLon-minLon,1e-5), sy=(c.height-pad*2)/Math.max(maxLat-minLat,1e-5);
-  var pts=GPS_PTS.map(function(p){return{x:pad+(p.lon-minLon)*sx,y:c.height-pad-(p.lat-minLat)*sy};});
-  MAP_CTX.fillStyle="rgba(26,92,42,0.15)";
-  MAP_CTX.beginPath(); MAP_CTX.moveTo(pts[0].x,pts[0].y);
-  for(var i=1;i<pts.length;i++) MAP_CTX.lineTo(pts[i].x,pts[i].y);
-  MAP_CTX.closePath(); MAP_CTX.fill();
-  MAP_CTX.strokeStyle="#1a5c2a"; MAP_CTX.lineWidth=2.5;
-  MAP_CTX.beginPath(); MAP_CTX.moveTo(pts[0].x,pts[0].y);
-  for(var i=1;i<pts.length;i++) MAP_CTX.lineTo(pts[i].x,pts[i].y);
-  MAP_CTX.closePath(); MAP_CTX.stroke();
-  for(var i=0;i<pts.length;i++){
-    MAP_CTX.fillStyle=i===0?"#e74c3c":"#1a5c2a";
-    MAP_CTX.beginPath(); MAP_CTX.arc(pts[i].x,pts[i].y,i===0?6:4,0,Math.PI*2); MAP_CTX.fill();
-  }
-}
-
-// --- BOOT ---
-document.addEventListener("DOMContentLoaded", function(){
-  // Auth tab switching
-  G("tabLogin").addEventListener("click", function(){ showAuth("login"); });
-  G("tabReg").addEventListener("click", function(){ showAuth("reg"); });
-  G("loginBtn").addEventListener("click", doLogin);
-  G("registerBtn").addEventListener("click", doRegister);
-  // Enter key on login
-  ["li_id","li_code"].forEach(function(id){
-    var el=G(id); if(el) el.addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});
-  });
-  // App buttons
-  G("syncNowBtn").addEventListener("click", doSync);
-  G("profileBtn").addEventListener("click", function(){ goTab("profile"); });
-  // Install banner
-  G("doInstallBtn").addEventListener("click", function(){
-    if(deferredInstall){ deferredInstall.prompt(); deferredInstall.userChoice.then(function(){ deferredInstall=null; G("installBar").style.display="none"; }); }
-  });
-  G("closeInstallBtn").addEventListener("click", function(){ lss("af_install_dismissed",true); G("installBar").style.display="none"; });
-  G("closeGuideBtn").addEventListener("click", function(){ lss("af_guide_seen",true); G("installGuide").style.display="none"; });
-  // Auto-login
-  try{
-    var cur=ls("af_cur",null);
-    if(cur&&cur.id){
-      var all=getMembers(); var found=null;
-      for(var i=0;i<all.length;i++){ if(all[i].id===cur.id){found=all[i];break;} }
-      if(found){ state.user=found; state.tab=(ROLES[found.role]||{tabs:["feed"]}).tabs[0]; launchApp(); }
-    }
-  }catch(e){}
 });
 </script>
 </body>
