@@ -1,243 +1,217 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Arlee Farm"/>
 <title>Arlee Farm</title>
 <style>
-body{font-family:system-ui;background:#f0f4ed;margin:0;padding:0;min-height:100vh}
-.auth-page{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:linear-gradient(160deg,#0a2e14,#1a5c2a)}
-.auth-box{background:#fff;border-radius:16px;padding:30px;width:100%;max-width:360px;box-shadow:0 10px 40px rgba(0,0,0,0.2)}
-h1{color:#1a5c2a;text-align:center;margin-bottom:5px;font-size:28px}
-.motto{text-align:center;color:#888;font-size:12px;font-style:italic;margin-bottom:25px}
-.tabs{display:flex;border:1px solid #ddd;border-radius:8px;overflow:hidden;margin-bottom:20px}
-.tab-btn{flex:1;padding:10px;border:none;background:#fff;color:#888;cursor:pointer;font-weight:600;font-size:13px}
-.tab-btn.active{background:#1a5c2a;color:#fff}
-.form-group{margin-bottom:15px}
-label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:5px}
-input, select{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box}
-input:focus, select:focus{outline:none;border-color:#1a5c2a}
-button{width:100%;padding:11px;background:#1a5c2a;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:5px}
-button:hover{background:#0d3318}
-.message{font-size:12px;text-align:center;margin-top:10px;min-height:18px;padding:8px}
-.message.ok{color:#1a5c2a}
-.message.err{color:#c0392b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f0f4ed;min-height:100vh}
+input,select,textarea,button{font-family:inherit;font-size:14px;color:#222}
 .hidden{display:none}
-.dashboard{padding:20px;background:#f0f4ed;min-height:100vh}
-.topbar{background:linear-gradient(135deg,#0d3318,#1a5c2a);color:#fff;padding:15px 20px;border-radius:8px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
-.topbar h2{margin:0;font-size:18px}
-.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:15px;border:1px solid #dde8dd}
-.card h3{color:#1a5c2a;margin-top:0}
-button.logout{background:#a02020;padding:8px 16px;font-size:12px;width:auto}
+.page{display:none}
+.page.show{display:block}
+.auth-bg{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,#0a2e14,#1a5c2a)}
+.auth-box{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:340px}
+.auth-tabs{display:flex;border:1px solid #ddd;border-radius:8px;overflow:hidden;margin-bottom:16px}
+.auth-tab{flex:1;padding:9px;font-size:13px;border:none;cursor:pointer;font-weight:600;background:#fff;color:#888}
+.auth-tab.on{background:#1a5c2a;color:#fff}
+.fld{margin-bottom:10px}
+.fld label{font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:4px}
+.fld input,.fld select{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;background:#fff}
+.fld input:focus,.fld select:focus{outline:none;border-color:#1a5c2a}
+.btn-green{width:100%;background:#1a5c2a;color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px}
+.msg{font-size:12px;text-align:center;margin-top:8px;min-height:18px}
+.msg.ok{color:#1a5c2a}
+.msg.err{color:#c0392b}
+.app-wrap{display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:linear-gradient(135deg,#0d3318,#1a5c2a);padding:11px 14px;color:#fff;display:flex;align-items:center;gap:10px}
+.logo{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.farm-title{font-size:14px;font-weight:800}
+.farm-motto{font-size:11px;font-style:italic;opacity:.7}
+.profile-btn{margin-left:auto;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:none;border-radius:20px;padding:4px 11px 4px 5px;cursor:pointer;color:#fff}
+.profile-av{width:27px;height:27px;border-radius:50%;background:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.role-bar{background:#0a2e14;color:rgba(255,255,255,.85);padding:8px 14px;font-size:12px}
+.tabs-bar{display:flex;background:#fff;border-bottom:2px solid #e0e8e0;overflow-x:auto}
+.tab-btn{padding:10px 13px;font-size:12px;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;white-space:nowrap;color:#888;font-weight:500;margin-bottom:-2px;flex-shrink:0}
+.tab-btn.on{color:#1a5c2a;border-bottom-color:#1a5c2a;font-weight:700}
+.content{padding:13px;padding-bottom:60px;flex:1;overflow-y:auto}
+.card{background:#fff;border-radius:12px;border:1px solid #dde8dd;padding:13px;margin-bottom:10px}
+.sec{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin:8px 0 10px}
+.fi{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;background:#fff;margin-bottom:8px}
+.fi:focus{outline:none;border-color:#1a5c2a}
+.btn-g{background:#1a5c2a;color:#fff;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;font-weight:700;font-size:13px}
+.btn-o{background:#fff;color:#1a5c2a;border:2px solid #1a5c2a;border-radius:8px;padding:7px 13px;cursor:pointer;font-weight:600;font-size:13px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat-box{background:#f0f8f0;border-radius:8px;padding:10px;text-align:center}
+.stat-val{font-size:18px;font-weight:800;color:#1a5c2a}
+.stat-lbl{font-size:10px;color:#888;margin-top:2px}
+.gdn-card{background:#fff;border-radius:12px;border:1.5px solid #dde8dd;padding:12px;margin-bottom:8px;cursor:pointer}
+.gdn-card:hover{border-color:#1a5c2a;background:#f7fdf8}
 </style>
 </head>
 <body>
 
-<!-- LOGIN/REGISTER PAGE -->
-<div id="authPage" class="auth-page">
-  <div class="auth-box">
-    <h1>🌱 Arlee Farm</h1>
-    <div class="motto">Time Will Tell</div>
-    
-    <div class="tabs">
-      <button class="tab-btn active" onclick="showTab('login')">Login</button>
-      <button class="tab-btn" onclick="showTab('register')">Register</button>
-    </div>
-    
-    <!-- LOGIN FORM -->
-    <div id="loginTab">
-      <div class="form-group">
-        <label>Name or Email</label>
-        <input type="text" id="loginName" placeholder="Enter your name"/>
+<div id="authPage" class="page show">
+  <div class="auth-bg">
+    <div style="font-size:46px;margin-bottom:7px">🌱</div>
+    <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:2px">Arlee Farm</div>
+    <div style="font-size:11px;font-style:italic;color:rgba(255,255,255,.65);margin-bottom:20px">Time Will Tell</div>
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="auth-tab on" id="tabLogin">Login</button>
+        <button class="auth-tab" id="tabReg">Register</button>
       </div>
-      <div class="form-group">
-        <label>4-Digit Code</label>
-        <input type="password" id="loginCode" maxlength="4" placeholder="1234"/>
+      <div id="loginForm">
+        <div class="fld"><label>Name or Email</label><input id="li_id" placeholder="Enter name or email"/></div>
+        <div class="fld"><label>4-digit code</label><input id="li_code" type="password" maxlength="4" placeholder="1234"/></div>
+        <button class="btn-green" id="loginBtn">Login</button>
+        <div class="msg" id="li_msg"></div>
       </div>
-      <button onclick="doLogin()">Login</button>
-      <div id="loginMsg" class="message"></div>
-    </div>
-    
-    <!-- REGISTER FORM -->
-    <div id="registerTab" class="hidden">
-      <div class="form-group">
-        <label>Full Name *</label>
-        <input type="text" id="regName" placeholder="Your name"/>
+      <div id="regForm" class="hidden">
+        <div class="fld"><label>Full name *</label><input id="re_name" placeholder="Your name"/></div>
+        <div class="fld"><label>Email</label><input id="re_email" type="email" placeholder="you@email.com"/></div>
+        <div class="fld"><label>4-digit code *</label><input id="re_code" type="password" maxlength="4" placeholder="1234"/></div>
+        <div class="fld"><label>Role *</label><select id="re_role"><option>CEO</option><option>Crop Worker</option><option>General Manager</option><option>Agronomist</option></select></div>
+        <button class="btn-green" id="registerBtn">Create Account</button>
+        <div class="msg" id="re_msg"></div>
       </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="regEmail" placeholder="your@email.com"/>
-      </div>
-      <div class="form-group">
-        <label>4-Digit Code *</label>
-        <input type="password" id="regCode" maxlength="4" placeholder="1234"/>
-      </div>
-      <div class="form-group">
-        <label>Role</label>
-        <select id="regRole">
-          <option>CEO</option>
-          <option>Crop Worker</option>
-          <option>General Manager</option>
-        </select>
-      </div>
-      <button onclick="doRegister()">Create Account</button>
-      <div id="regMsg" class="message"></div>
     </div>
   </div>
 </div>
 
-<!-- DASHBOARD PAGE -->
-<div id="dashPage" class="hidden">
-  <div class="dashboard">
+<div id="appPage" class="page">
+  <div class="app-wrap">
     <div class="topbar">
-      <div>
-        <h2>Arlee Farm</h2>
-        <div id="userInfo" style="font-size:12px">Welcome</div>
-      </div>
-      <button class="logout" onclick="doLogout()">Logout</button>
+      <div class="logo">🌱</div>
+      <div><div class="farm-title">Arlee Farm</div><div class="farm-motto">Time Will Tell</div></div>
+      <button class="profile-btn" id="profileBtn"><div class="profile-av" id="userAv">?</div></button>
     </div>
-    
-    <div class="card">
-      <h3>✅ Welcome to Arlee Farm!</h3>
-      <p>Your farm management app is working correctly.</p>
-      <p>Features:</p>
-      <ul>
-        <li>✓ User registration & login</li>
-        <li>✓ Multiple team roles</li>
-        <li>✓ Data stored locally on your device</li>
-        <li>✓ Works offline</li>
-      </ul>
-    </div>
-    
-    <div class="card">
-      <h3>🚀 Next Steps</h3>
-      <p>Share your GitHub Pages URL with your team so they can create accounts and use the app together.</p>
-    </div>
+    <div class="role-bar" id="roleBar">Welcome</div>
+    <div class="tabs-bar" id="tabsBar"></div>
+    <div class="content" id="mainContent"></div>
   </div>
 </div>
 
 <script>
-// Simple localStorage functions
-function saveUser(user) {
-  localStorage.setItem('users', JSON.stringify(
-    (JSON.parse(localStorage.getItem('users')) || []).concat([user])
-  ));
-}
+var ROLES={CEO:{tabs:["feed","gardens","tasks","profile"]},Agronomist:{tabs:["feed","gardens","tasks","profile"]},"Crop Worker":{tabs:["feed","gardens","tasks","profile"]},"General Manager":{tabs:["feed","gardens","tasks","profile"]}};
+var state={user:null,tab:"feed"};
 
-function getUsers() {
-  try {
-    return JSON.parse(localStorage.getItem('users')) || [];
-  } catch(e) {
-    return [];
+function G(id){return document.getElementById(id)}
+function ls(k,d){try{var v=localStorage.getItem(k);return v!==null?JSON.parse(v):d}catch(e){return d}}
+function lss(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function msg(id,txt,type){var el=G(id);if(!el)return;el.className="msg "+(type||"ok");el.textContent=txt}
+
+function getUsers(){return ls("af_users",[])}
+function saveUsers(u){lss("af_users",u)}
+function getGardens(){return ls("af_gdns",[])}
+function saveGardens(g){lss("af_gdns",g)}
+
+function showAuth(tab){G("loginForm").classList.toggle("hidden",tab!=="login");G("regForm").classList.toggle("hidden",tab!=="register");G("tabLogin").classList.toggle("on",tab==="login");G("tabReg").classList.toggle("on",tab==="register")}
+
+function doLogin(){
+  var id=(G("li_id").value||"").trim().toLowerCase();var code=(G("li_code").value||"").trim();
+  if(!id||!code){msg("li_msg","Please enter name and code","err");return}
+  var users=getUsers();var found=null;
+  for(var i=0;i<users.length;i++){
+    if((users[i].name.toLowerCase()===id||users[i].email.toLowerCase()===id)&&users[i].code===code){found=users[i];break}
   }
+  if(!found){msg("li_msg","Invalid name and code","err");return}
+  state.user=found;lss("af_cur",found);launchApp()
 }
 
-function setCurrentUser(user) {
-  localStorage.setItem('currentUser', JSON.stringify(user));
+function doRegister(){
+  var name=(G("re_name").value||"").trim();var email=(G("re_email").value||"").trim();var code=(G("re_code").value||"").trim();var role=(G("re_role")||{value:"Crop Worker"}).value;
+  if(!name){msg("re_msg","Name required","err");return}if(!code||code.length<4){msg("re_msg","Code must be 4 digits","err");return}
+  var users=getUsers();for(var i=0;i<users.length;i++){if(users[i].email===email){msg("re_msg","Email already registered","err");return}}
+  var newUser={id:Date.now(),name:name,email:email,code:code,role:role,joined:new Date().toLocaleDateString()};
+  users.push(newUser);saveUsers(users);
+  msg("re_msg","✅ Account created! Switching...","ok");
+  setTimeout(function(){showAuth("login");G("li_id").value=name;G("li_code").value=code},800)
 }
 
-function getCurrentUser() {
-  try {
-    return JSON.parse(localStorage.getItem('currentUser'));
-  } catch(e) {
-    return null;
-  }
+function launchApp(){
+  G("authPage").classList.remove("show");G("appPage").classList.add("show");
+  state.tab=(ROLES[state.user.role]||{tabs:["feed"]}).tabs[0];
+  G("userAv").textContent=state.user.name[0].toUpperCase();
+  G("roleBar").textContent=state.user.name+" ("+state.user.role+")";
+  buildTabs();renderContent()
 }
 
-// Tab switching
-function showTab(tab) {
-  document.getElementById('loginTab').classList.add('hidden');
-  document.getElementById('registerTab').classList.add('hidden');
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  
-  if(tab === 'login') {
-    document.getElementById('loginTab').classList.remove('hidden');
-    document.querySelectorAll('.tab-btn')[0].classList.add('active');
-  } else {
-    document.getElementById('registerTab').classList.remove('hidden');
-    document.querySelectorAll('.tab-btn')[1].classList.add('active');
-  }
+function buildTabs(){
+  var rd=ROLES[state.user.role]||{tabs:["feed"]};var html="";
+  rd.tabs.forEach(function(t){html+='<button class="tab-btn'+(t===state.tab?" on":"")+'" data-tab="'+t+'">'+{feed:"Feed",gardens:"Gardens",tasks:"Tasks",profile:"Profile"}[t]+'</button>'});
+  G("tabsBar").innerHTML=html;
+  G("tabsBar").querySelectorAll("[data-tab]").forEach(function(btn){btn.addEventListener("click",function(){state.tab=this.getAttribute("data-tab");buildTabs();renderContent()})})
 }
 
-// Registration
-function doRegister() {
-  const name = document.getElementById('regName').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  const code = document.getElementById('regCode').value.trim();
-  const role = document.getElementById('regRole').value;
-  const msg = document.getElementById('regMsg');
-  
-  if(!name) { msg.className='message err'; msg.textContent='Name required'; return; }
-  if(!code || code.length < 4) { msg.className='message err'; msg.textContent='Code must be 4 digits'; return; }
-  
-  const users = getUsers();
-  if(users.find(u => u.email === email)) {
-    msg.className='message err'; msg.textContent='Email already registered'; return;
-  }
-  
-  const newUser = {id: Date.now(), name, email, code, role, joined: new Date().toLocaleDateString()};
-  saveUser(newUser);
-  
-  msg.className='message ok';
-  msg.textContent='✅ Account created! Switching to login...';
-  
-  setTimeout(() => {
-    showTab('login');
-    document.getElementById('loginName').value = name;
-    document.getElementById('loginCode').value = code;
-  }, 1000);
+function renderContent(){
+  var html="";
+  if(state.tab==="feed")html=pageFeed();
+  else if(state.tab==="gardens")html=pageGardens();
+  else if(state.tab==="tasks")html=pageTasks();
+  else if(state.tab==="profile")html=pageProfile();
+  G("mainContent").innerHTML=html;bindEvents()
 }
 
-// Login
-function doLogin() {
-  const name = document.getElementById('loginName').value.trim().toLowerCase();
-  const code = document.getElementById('loginCode').value.trim();
-  const msg = document.getElementById('loginMsg');
-  
-  if(!name || !code) {
-    msg.className='message err';
-    msg.textContent='Please fill in all fields';
-    return;
-  }
-  
-  const users = getUsers();
-  const user = users.find(u => (u.name.toLowerCase() === name || u.email.toLowerCase() === name) && u.code === code);
-  
-  if(!user) {
-    msg.className='message err';
-    msg.textContent='Invalid name and code';
-    return;
-  }
-  
-  setCurrentUser(user);
-  showDashboard();
+function pageFeed(){return'<div class="sec">Welcome Back!</div><div class="card"><div style="font-size:28px;text-align:center;margin-bottom:10px">🌱</div><div style="font-size:14px;font-weight:700;color:#1a5c2a">Welcome, '+state.user.name+'</div><div style="font-size:12px;color:#666;margin-top:8px;line-height:1.6">Arlee Farm is your complete farm management system. Use the tabs to:<br/>• Manage gardens with photos & activities<br/>• Track daily tasks<br/>• Manage your profile</div></div>'}
+
+function pageGardens(){
+  var gdns=getGardens();
+  var html='<div class="sec">My Gardens ('+gdns.length+')</div>';
+  html+='<button class="btn-g" style="width:100%;margin-bottom:10px" onclick="addNewGarden()">+ New Garden</button>';
+  if(gdns.length){
+    gdns.forEach(function(g){
+      html+='<div class="gdn-card" onclick="viewGarden(\''+g.id+'\')"><div style="font-size:13px;font-weight:700">'+g.name+'</div><div style="font-size:11px;color:#888">'+g.cropType+' • '+g.location+'</div><div style="font-size:11px;color:#1a5c2a;margin-top:4px">📸 '+(g.photos||[]).length+' | 📝 '+(g.activities||[]).length+'</div></div>'
+    })
+  }else{html+='<div class="card" style="text-align:center;padding:24px;color:#aaa">No gardens yet. Tap + New Garden to start.</div>'}
+  return html
 }
 
-// Show dashboard
-function showDashboard() {
-  document.getElementById('authPage').classList.add('hidden');
-  document.getElementById('dashPage').classList.remove('hidden');
+function addNewGarden(){
+  var name=prompt("Garden name:");if(!name)return;
+  var location=prompt("Location:");if(!location)location="Unassigned";
+  var crop=prompt("Crop type (e.g. Tomato):");if(!crop)return;
+  var gdns=getGardens();gdns.push({id:"g"+Date.now(),name:name,location:location,cropType:crop,photos:[],activities:[],created:new Date().toLocaleDateString()});
+  saveGardens(gdns);renderContent()
+}
+
+function viewGarden(id){
+  var gdns=getGardens();var g=gdns.find(function(x){return x.id===id});if(!g)return;
+  var html='<button class="btn-o" style="margin-bottom:10px" onclick="renderContent()">← Back</button>';
+  html+='<div class="card"><div style="font-size:16px;font-weight:700;color:#1a5c2a">'+g.name+'</div><div style="font-size:12px;color:#888">'+g.cropType+' • '+g.location+'</div></div>';
+  html+='<div class="card"><div class="sec">Photos</div>';
+  if(g.photos&&g.photos.length){html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'+g.photos.map(function(p){return'<img src="'+p+'" style="width:100%;height:80px;border-radius:8px;object-fit:cover"/>'}).join("")+'</div>'}else{html+='<div style="text-align:center;color:#aaa;padding:20px">No photos yet</div>'}
+  html+='</div>';
+  html+='<div class="card"><div class="sec">Activities</div>';
+  if(g.activities&&g.activities.length){html+=g.activities.map(function(a){return'<div style="padding:8px;background:#f7fdf8;border-radius:6px;margin-bottom:6px"><div style="font-size:12px;font-weight:700">'+a.stage+'</div><div style="font-size:11px;color:#666">'+a.text+'</div></div>'}).join("")}else{html+='<div style="text-align:center;color:#aaa;padding:12px">No activities logged</div>'}
+  html+='</div>';
+  G("mainContent").innerHTML=html
+}
+
+function pageTasks(){return'<div class="sec">Tasks</div><div class="card"><div style="font-size:13px;font-weight:700;color:#1a5c2a;margin-bottom:10px">Daily Checklist</div><div style="font-size:12px;color:#666;line-height:1.6">• Water plants<br/>• Check for pests<br/>• Apply fertilizer<br/>• Weed gardens</div></div>'}
+
+function pageProfile(){
+  return'<div class="sec">My Profile</div><div class="card"><div style="font-size:13px;font-weight:700;color:#1a3c20;margin-bottom:10px">'+state.user.name+'</div><div style="font-size:12px;color:#666;line-height:1.6">Role: '+state.user.role+'<br/>Email: '+(state.user.email||"—")+'<br/>Joined: '+state.user.joined+'</div><button class="btn-g" style="width:100%;margin-top:10px" onclick="doLogout()">Logout</button></div>'
+}
+
+function doLogout(){state.user=null;lss("af_cur",null);G("authPage").classList.add("show");G("appPage").classList.remove("show")}
+
+function bindEvents(){
+  // Events will be added here if needed
+}
+
+document.addEventListener("DOMContentLoaded",function(){
+  G("tabLogin").addEventListener("click",function(){showAuth("login")});
+  G("tabReg").addEventListener("click",function(){showAuth("register")});
+  G("loginBtn").addEventListener("click",doLogin);
+  G("registerBtn").addEventListener("click",doRegister);
+  G("profileBtn").addEventListener("click",function(){state.tab="profile";buildTabs();renderContent()});
   
-  const user = getCurrentUser();
-  document.getElementById('userInfo').textContent = `${user.name} (${user.role})`;
-}
-
-// Logout
-function doLogout() {
-  localStorage.removeItem('currentUser');
-  document.getElementById('authPage').classList.remove('hidden');
-  document.getElementById('dashPage').classList.add('hidden');
-  document.getElementById('loginName').value = '';
-  document.getElementById('loginCode').value = '';
-}
-
-// Check if logged in
-window.addEventListener('load', () => {
-  const user = getCurrentUser();
-  if(user) {
-    showDashboard();
-  }
-});
+  var cur=ls("af_cur",null);if(cur&&cur.id){var users=getUsers();var found=users.find(function(u){return u.id===cur.id});if(found){state.user=found;launchApp()}}
+})
 </script>
 </body>
 </html>
